@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import { PageHero } from "@/components/ui/PageHero";
 import { Container } from "@/components/ui/Container";
@@ -6,30 +5,19 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { Timeline } from "@/components/sections/Timeline";
 import { JsonLd, molinoJsonLd, breadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { SITE, PHOTOS } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
+import { PHOTOS } from "@/content/site";
 import { CHAPTERS, SOURCES } from "@/content/historia";
 
 const TITLE = "Cuatro siglos. Una historia por descubrir.";
 const DESCRIPTION =
   "Del contrato de 1621 a la restauración de 1973: la historia del Molino de Sabandía, el único molino colonial de Arequipa que sigue moliendo con la fuerza del agua.";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Historia",
   description: DESCRIPTION,
-  alternates: { canonical: "/historia" },
-  openGraph: {
-    title: `Historia · ${SITE.name}`,
-    description: DESCRIPTION,
-    images: [
-      {
-        url: PHOTOS.historica.src,
-        width: PHOTOS.historica.width,
-        height: PHOTOS.historica.height,
-        alt: PHOTOS.historica.alt,
-      },
-    ],
-  },
-};
+  path: "/historia",
+});
 
 export default function HistoriaPage() {
   return (

@@ -1,22 +1,18 @@
-import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { MapEmbed } from "@/components/sections/MapEmbed";
+import { pageMetadata } from "@/lib/seo";
 import { SITE } from "@/content/site";
 
 const DESCRIPTION = "Escríbenos para consultas sobre tu visita, eventos, el restaurante o prensa. Te respondemos por correo.";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Contacto",
   description: DESCRIPTION,
-  alternates: { canonical: "/contacto" },
-  openGraph: {
-    title: `Contacto · ${SITE.name}`,
-    description: DESCRIPTION,
-  },
-};
+  path: "/contacto",
+});
 
 export default function ContactoPage() {
   return (

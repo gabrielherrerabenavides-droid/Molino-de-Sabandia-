@@ -17,10 +17,15 @@ export function desplazarMes(mes: string, delta: number): string {
   return `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, "0")}`;
 }
 
-/** Carga la disponibilidad de un mes desde la API. */
-export function useDisponibilidad(mes: string, activo: boolean) {
-  const [respuesta, setRespuesta] = useState<{ mes: string; data: MesDisponibilidad | null; error: string | null }>({
-    mes: "",
+/**
+ * Carga la disponibilidad de un mes desde la API.
+ * `recarga` fuerza un refetch del mismo mes (por ejemplo tras un 409 al enviar):
+ * la clave compuesta hace que las celdas vuelvan a "cargando" mientras llega.
+ */
+export function useDisponibilidad(mes: string, activo: boolean, recarga = 0) {
+  const clave = `${mes}#${recarga}`;
+  const [respuesta, setRespuesta] = useState<{ clave: string; data: MesDisponibilidad | null; error: string | null }>({
+    clave: "",
     data: null,
     error: null,
   });
@@ -33,19 +38,19 @@ export function useDisponibilidad(mes: string, activo: boolean) {
         if (!res.ok) throw new Error("respuesta no válida");
         return res.json() as Promise<MesDisponibilidad>;
       })
-      .then((json) => setRespuesta({ mes, data: json, error: null }))
+      .then((json) => setRespuesta({ clave, data: json, error: null }))
       .catch(() => {
         if (ctrl.signal.aborted) return;
         setRespuesta({
-          mes,
+          clave,
           data: null,
           error: "No pudimos cargar el calendario. Revisa tu conexión e inténtalo de nuevo.",
         });
       });
     return () => ctrl.abort();
-  }, [mes, activo]);
+  }, [clave, mes, activo]);
 
-  const alDia = respuesta.mes === mes;
+  const alDia = respuesta.clave === clave;
   return {
     data: alDia ? respuesta.data : null,
     cargando: activo && !alDia,
@@ -79,6 +84,12 @@ export function Calendario({ mes, onMes, data, cargando, error, slotsPermitidos,
   const mesMax = desplazarMes(mesMin, MESES_VISTA);
   const puedeAtras = mes > mesMin;
   const puedeAdelante = mes < mesMax;
+
+  // Red de seguridad si el reloj del navegador va por detrás del servidor: nunca
+  // se muestra un mes anterior al primero solicitable (quedaría todo en gris).
+  useEffect(() => {
+    if (data && mes < data.minDate.slice(0, 7)) onMes(data.minDate.slice(0, 7));
+  }, [data, mes, onMes]);
 
   return (
     <div>
@@ -181,7 +192,15 @@ export function Calendario({ mes, onMes, data, cargando, error, slotsPermitidos,
       </div>
 
       <p aria-live="polite" className="t-label mt-3 min-h-5">
-        {error ? <span className="text-alerta">{error}</span> : cargando ? "Cargando disponibilidad…" : ""}
+        {error ? (
+          <span className="text-alerta">{error}</span>
+        ) : cargando ? (
+          "Cargando disponibilidad…"
+        ) : data && data.days.every((d) => d.fueraDePlazo) ? (
+          `La primera fecha disponible es el ${fechaLarga(data.minDate)}.`
+        ) : (
+          ""
+        )}
       </p>
     </div>
   );

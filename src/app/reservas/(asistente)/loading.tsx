@@ -1,4 +1,9 @@
-/** Esqueleto sobrio mientras carga el asistente de reservas (sin spinners). */
+/**
+ * Esqueleto sobrio mientras carga el asistente de reservas (sin spinners).
+ * Vive en el grupo `(asistente)` a propósito: si estuviera en `/reservas` envolvería
+ * también `/reservas/[token]` en un Suspense, la cabecera se enviaría antes de
+ * resolver el token y un enlace inválido respondería 200 en vez de 404.
+ */
 export default function LoadingReservas() {
   return (
     <div className="pt-[calc(var(--header-h)+clamp(40px,8vw,120px))]" aria-busy="true">

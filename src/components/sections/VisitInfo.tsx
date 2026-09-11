@@ -1,4 +1,3 @@
-"use client";
 import { Car, Bus, Footprints, Droplets, SunMedium, Milestone, Accessibility } from "lucide-react";
 import { SITE } from "@/content/site";
 import { Reveal, RevealItem } from "@/components/ui/Reveal";
@@ -92,14 +91,6 @@ export function VisitInfo() {
           </div>
           <Reveal>
             <MapEmbed />
-            <a
-              href={SITE.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-line t-label-ocre mt-4 inline-block"
-            >
-              Abrir en Google Maps
-            </a>
           </Reveal>
         </div>
       </section>

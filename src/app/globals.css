@@ -137,7 +137,8 @@
     background: #fff; color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-sm);
     transition: border-color 0.25s var(--ease-house), box-shadow 0.25s var(--ease-house);
   }
-  .input::placeholder { color: #9a9b92; }
+  /* #6b6d64 sobre #fff = 5.25:1 (WCAG 2.1 AA, 1.4.3); el anterior #9a9b92 daba 2.81:1. */
+  .input::placeholder { color: #6b6d64; }
   .input:focus { outline: none; border-color: var(--color-agua-500); box-shadow: 0 0 0 3px rgba(63, 111, 122, 0.18); }
   .input[aria-invalid="true"] { border-color: var(--color-alerta); }
   textarea.input { min-height: 120px; resize: vertical; }
@@ -170,6 +171,29 @@
   .photo-grade { filter: saturate(0.86) contrast(1.04) brightness(0.98); }
 
   /* ---------- Utilidades de movimiento ---------- */
+  /*
+   * Entradas de aparición hechas con CSS y no con Motion: el HTML
+   * prerenderizado no lleva `opacity:0` en línea, así que el contenido pinta
+   * sin esperar a la hidratación (FCP/LCP) y sigue siendo visible sin JS.
+   * `both` aplica el fotograma inicial antes de arrancar y conserva el final.
+   */
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(var(--rise-y, 12px)); }
+    to { opacity: 1; transform: none; }
+  }
+  .rise-in {
+    animation: rise-in var(--rise-duration, 0.9s) var(--ease-house) both;
+    animation-delay: var(--rise-delay, 0s);
+  }
+  /* Titular por palabras: `--i` es el índice global de la palabra. */
+  .word-in {
+    animation: rise-in var(--rise-duration, 0.9s) var(--ease-house) both;
+    animation-delay: calc(var(--i, 0) * var(--word-stagger, 0.05s) + var(--rise-delay, 0s));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rise-in, .word-in { animation: none; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
   }

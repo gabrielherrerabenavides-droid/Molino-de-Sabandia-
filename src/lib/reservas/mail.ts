@@ -7,6 +7,11 @@ import { mailLayout, sendMail } from "@/lib/email";
 import { fechaLarga, franjaLabel } from "@/lib/reservas/format";
 import { eventTypeTitle, type Reserva } from "@/lib/reservas/schema";
 
+/** Enlace a la constancia: va por token opaco, nunca por el código legible. */
+function urlConstancia(reserva: Reserva): string {
+  return `${SITE.url}/reservas/${reserva.token}`;
+}
+
 function esc(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -58,7 +63,7 @@ export async function sendSolicitudCliente(reserva: Reserva) {
     "Recibimos tu solicitud",
     `<p style="margin:0 0 16px">Hola ${esc(reserva.name.split(" ")[0] ?? reserva.name)}, gracias por escribirnos. Esta es tu solicitud:</p>
      ${tabla(resumenRows(reserva))}
-     <p style="margin:0 0 16px">Guarda tu código <strong>${esc(reserva.code)}</strong>. Puedes consultar el estado en <a href="${SITE.url}/reservas/${esc(reserva.code)}" style="color:#8a6a34">${SITE.url}/reservas/${esc(reserva.code)}</a>.</p>
+     <p style="margin:0 0 16px">Guarda tu código <strong>${esc(reserva.code)}</strong> para cualquier consulta. Este enlace privado muestra el estado de tu solicitud: <a href="${urlConstancia(reserva)}" style="color:#8a6a34">${urlConstancia(reserva)}</a>. No lo compartas.</p>
      <p style="margin:0 0 16px"><strong>Te confirmamos en 24–48 h</strong> la disponibilidad de la fecha y las condiciones. Todavía no es una reserva confirmada.</p>
      <p style="margin:0 0 8px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#63655c">Cualquier duda</p>
      ${contactoHtml()}`,
@@ -68,7 +73,7 @@ export async function sendSolicitudCliente(reserva: Reserva) {
     ...resumenRows(reserva).map(([k, v]) => `${k}: ${v}`),
     "",
     "Te confirmamos en 24-48 h la disponibilidad y las condiciones.",
-    `Estado de tu solicitud: ${SITE.url}/reservas/${reserva.code}`,
+    `Estado de tu solicitud (enlace privado, no lo compartas): ${urlConstancia(reserva)}`,
     `Contacto: ${SITE.contact.email}`,
   ].join("\n");
   return sendMail({ to: reserva.email, subject, html, text, replyTo: notifyEmail() });
@@ -124,13 +129,13 @@ const ESTADO_COPY: Record<Reserva["status"], { subject: (code: string) => string
 /** Aviso al cliente cuando la administración cambia el estado. */
 export async function sendEstadoCliente(reserva: Reserva) {
   const copy = ESTADO_COPY[reserva.status];
-  const notas = reserva.adminNotes?.trim();
+  // `adminNotes` es interno: nunca viaja al cliente ni se publica en la constancia.
   const html = mailLayout(
     copy.title,
     `<p style="margin:0 0 16px">Hola ${esc(reserva.name.split(" ")[0] ?? reserva.name)}:</p>
      ${tabla(resumenRows(reserva))}
      <p style="margin:0 0 16px">${esc(copy.body)}</p>
-     ${notas ? `<p style="margin:0 0 16px;padding:12px 14px;background:#efece3">${esc(notas)}</p>` : ""}
+     <p style="margin:0 0 16px">Puedes ver el estado en tu enlace privado: <a href="${urlConstancia(reserva)}" style="color:#8a6a34">${urlConstancia(reserva)}</a></p>
      <p style="margin:0 0 8px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#63655c">Contacto</p>
      ${contactoHtml()}`,
   );
@@ -139,7 +144,7 @@ export async function sendEstadoCliente(reserva: Reserva) {
     ...resumenRows(reserva).map(([k, v]) => `${k}: ${v}`),
     "",
     copy.body,
-    ...(notas ? ["", notas] : []),
+    `Estado de tu solicitud: ${urlConstancia(reserva)}`,
     `Contacto: ${SITE.contact.email}`,
   ].join("\n");
   return sendMail({ to: reserva.email, subject: copy.subject(reserva.code), html, text, replyTo: notifyEmail() });

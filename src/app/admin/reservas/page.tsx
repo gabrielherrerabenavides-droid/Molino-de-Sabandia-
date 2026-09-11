@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { AdminFiltros } from "@/components/admin/AdminFiltros";
+import { DepurarDatos } from "@/components/admin/DepurarDatos";
 import { ReservaAcciones } from "@/components/admin/ReservaAcciones";
 import { EstadoReserva } from "@/components/reservas/EstadoReserva";
 import { fechaCorta, fechaHora, franjaLabel, mesLargo } from "@/lib/reservas/format";
 import { eventTypeTitle, reservaFiltroSchema, STATUS_LABELS, type ReservaStatus } from "@/lib/reservas/schema";
 import { contarPorEstado, listarReservas, mesesConReservas } from "@/lib/reservas/service";
-import { storageMode } from "@/lib/store";
+import { storageLabel } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Reservas",
-  description: "Listado interno de solicitudes de reserva.",
+  ...pageMetadata({
+    title: "Reservas",
+    description: "Listado interno de solicitudes de reserva.",
+    path: "/admin/reservas",
+    noindex: true,
+  }),
   robots: { index: false, follow: false, nocache: true },
 };
 
@@ -93,7 +99,7 @@ export default async function AdminReservasPage(props: PageProps<"/admin/reserva
           No hay solicitudes que coincidan con estos filtros.
         </p>
       ) : (
-        <div className="mt-8 overflow-x-auto">
+        <div className="relative mt-8 overflow-x-auto">
           <table className="w-full min-w-[1080px] border-collapse text-left align-top">
             <caption className="sr-only">
               Solicitudes de reserva con su estado y las acciones de administración.
@@ -155,8 +161,20 @@ export default async function AdminReservasPage(props: PageProps<"/admin/reserva
         </div>
       )}
 
-      <p className="t-label mt-10">
-        Almacenamiento: {storageMode === "postgres" ? "Neon Postgres" : "archivo local .data/reservas.json"}
+      <hr className="stone-rule mt-12" />
+
+      <div className="mt-8">
+        <h2 className="t-label mb-3">Plazos de conservación</h2>
+        <p className="t-body max-w-prose-narrow mb-4 text-muted">
+          Las solicitudes se conservan hasta dos años después de la fecha del evento, el plazo anunciado en la
+          política de privacidad. Las hojas del Libro de Reclamaciones no se depuran aquí: su conservación mínima es
+          de dos años (D.S. N.º 011-2011-PCM) y se revisan a mano.
+        </p>
+        <DepurarDatos />
+      </div>
+
+      <p className="t-label mt-10 [overflow-wrap:anywhere]">
+        Almacenamiento: {storageLabel("reservas")}
       </p>
     </section>
   );

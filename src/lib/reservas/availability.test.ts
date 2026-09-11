@@ -86,6 +86,52 @@ test("las reservas de otro día no afectan", () => {
   assert.deepEqual(A.slotFlags("2026-10-10", oc, AHORA), { manana: true, tarde: true, dia: true });
 });
 
+/**
+ * Regla que aplica `actualizarEstado` antes de confirmar (service.ts): se recalcula
+ * la ocupación del día con las demás reservas y se rechaza si la franja ya está
+ * bloqueada. Las pendientes no bloquean, así que varias pueden acumularse y solo
+ * la primera puede pasar a confirmada.
+ */
+type Slot = (typeof A.SLOTS)[number];
+type Estado = (typeof A.RESERVA_STATUSES)[number];
+
+function puedeConfirmar(
+  propia: { id: string; date: string; slot: Slot },
+  todas: Array<{ id: string; date: string; slot: Slot; status: Estado }>,
+): boolean {
+  const otras = todas.filter((r) => r.id !== propia.id && r.date === propia.date);
+  return !A.isSlotBlocked(propia.slot, A.confirmedSlots(propia.date, otras));
+}
+
+test("confirmar revalida la disponibilidad frente a las demás reservas del día", () => {
+  const a = { id: "a", date: "2026-10-10", slot: "tarde" as const, status: "pendiente" as const };
+  const b = { id: "b", date: "2026-10-10", slot: "tarde" as const, status: "pendiente" as const };
+
+  // Dos pendientes en la misma franja: ambas se pueden confirmar mientras nadie lo esté.
+  assert.equal(puedeConfirmar(a, [a, b]), true);
+  assert.equal(puedeConfirmar(b, [a, b]), true);
+
+  // Confirmada la primera, la segunda choca (409).
+  const confirmadaA = { ...a, status: "confirmada" as const };
+  assert.equal(puedeConfirmar(b, [confirmadaA, b]), false);
+
+  // Una reserva ya confirmada no se bloquea a sí misma (no cuenta su propia fila).
+  assert.equal(puedeConfirmar(confirmadaA, [confirmadaA, b]), true);
+
+  // "dia" y "manana" del mismo día también son incompatibles entre sí.
+  const manana = { id: "c", date: "2026-10-10", slot: "manana" as const, status: "confirmada" as const };
+  const diaCompleto = { id: "d", date: "2026-10-10", slot: "dia" as const, status: "pendiente" as const };
+  assert.equal(puedeConfirmar(diaCompleto, [manana, diaCompleto]), false);
+
+  // Otro día no interfiere.
+  const otroDia = { id: "e", date: "2026-10-11", slot: "tarde" as const, status: "pendiente" as const };
+  assert.equal(puedeConfirmar(otroDia, [confirmadaA, otroDia]), true);
+
+  // Cancelar la confirmada libera la franja.
+  const canceladaA = { ...a, status: "cancelada" as const };
+  assert.equal(puedeConfirmar(b, [canceladaA, b]), true);
+});
+
 test("fuera de plazo no hay ninguna franja disponible", () => {
   const dia = A.dayAvailability("2026-09-12", [], AHORA);
   assert.equal(dia.fueraDePlazo, true);

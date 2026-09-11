@@ -1,20 +1,15 @@
-import type { Metadata } from "next";
 import { Prose } from "@/components/sections/Prose";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { COOKIES_SECTIONS, COOKIES_ACTUALIZADO } from "@/content/legal/cookies";
-import { SITE } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 
 const DESCRIPTION = "Qué cookies y almacenamiento local usa el sitio del Molino de Sabandía, y cómo puedes desactivarlos.";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Política de cookies",
   description: DESCRIPTION,
-  alternates: { canonical: "/legal/cookies" },
-  openGraph: {
-    title: `Política de cookies · ${SITE.name}`,
-    description: DESCRIPTION,
-  },
-};
+  path: "/legal/cookies",
+});
 
 export default function CookiesPage() {
   return (

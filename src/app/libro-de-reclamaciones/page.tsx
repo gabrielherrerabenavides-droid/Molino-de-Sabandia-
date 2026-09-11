@@ -1,24 +1,30 @@
-import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { ReclamacionForm } from "@/components/sections/ReclamacionForm";
+import { pageMetadata } from "@/lib/seo";
+import { registroDisponible } from "@/lib/reclamaciones/service";
+import { PLAZO_RESPUESTA } from "@/lib/reclamaciones/constants";
 import { SITE } from "@/content/site";
 
 const DESCRIPTION =
   "Libro de Reclamaciones del Molino de Sabandía, conforme al D.S. N.º 011-2011-PCM y al D.S. N.º 101-2022-PCM.";
 
-export const metadata: Metadata = {
+/** El aviso de "registro no disponible" depende del entorno, así que se resuelve por petición. */
+export const dynamic = "force-dynamic";
+
+export const metadata = pageMetadata({
   title: "Libro de reclamaciones",
   description: DESCRIPTION,
-  alternates: { canonical: "/libro-de-reclamaciones" },
-  openGraph: {
-    title: `Libro de reclamaciones · ${SITE.name}`,
-    description: DESCRIPTION,
-  },
-};
+  path: "/libro-de-reclamaciones",
+});
+
+/** Dato pendiente de confirmar con la administración: se muestra sin corchetes ni ruido. */
+const POR_CONFIRMAR = "Pendiente de confirmación";
 
 export default function LibroDeReclamacionesPage() {
+  const disponible = registroDisponible();
+
   return (
     <div className="pt-[calc(var(--header-h)+clamp(40px,7vw,96px))] pb-[clamp(64px,10vw,140px)]">
       <Container>
@@ -35,7 +41,7 @@ export default function LibroDeReclamacionesPage() {
               </div>
               <div>
                 <dt className="t-label mr-2 inline">RUC:</dt>
-                <dd className="t-body inline text-volcan-700">[por completar]</dd>
+                <dd className="t-body inline text-volcan-700">{SITE.ruc || POR_CONFIRMAR}</dd>
               </div>
               <div>
                 <dt className="t-label mr-2 inline">Domicilio:</dt>
@@ -49,14 +55,27 @@ export default function LibroDeReclamacionesPage() {
               previo para interponer una denuncia ante el INDECOPI.
             </p>
             <p className="t-body text-volcan-700">
-              El proveedor debe dar respuesta al reclamo o queja en un plazo no mayor a quince (15) días hábiles, el
-              cual es improrrogable.
+              El proveedor debe dar respuesta al reclamo o queja en un plazo no mayor a {PLAZO_RESPUESTA}, el cual es
+              improrrogable.
             </p>
           </Reveal>
         </div>
 
         <div className="max-w-prose-narrow">
-          <ReclamacionForm />
+          {disponible ? (
+            <ReclamacionForm />
+          ) : (
+            <div className="border border-sillar-300 p-8">
+              <p className="t-h3 mb-3">El registro en línea no está disponible</p>
+              <p className="t-body text-volcan-700">
+                El registro electrónico no está disponible temporalmente. Escríbenos a{" "}
+                <a href={`mailto:${SITE.contact.email}`} className="link-line">
+                  {SITE.contact.email}
+                </a>{" "}
+                o presenta tu reclamo en el establecimiento, donde contamos con el Libro de Reclamaciones físico.
+              </p>
+            </div>
+          )}
         </div>
       </Container>
     </div>

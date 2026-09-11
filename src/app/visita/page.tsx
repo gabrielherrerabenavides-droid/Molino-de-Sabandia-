@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -6,24 +5,18 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ServiceList } from "@/components/sections/ServiceList";
 import { VisitInfo } from "@/components/sections/VisitInfo";
 import { JsonLd, molinoJsonLd, breadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { SITE, PHOTOS } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
+import { PHOTOS } from "@/content/site";
 
 const TITLE = "Te esperamos en Sabandía.";
 const DESCRIPTION =
   "Horarios, tarifas, cómo llegar y todo lo que necesitas para planear tu visita al Molino de Sabandía, en la campiña de Arequipa.";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Tu visita",
   description: DESCRIPTION,
-  alternates: { canonical: "/visita" },
-  openGraph: {
-    title: `Tu visita · ${SITE.name}`,
-    description: DESCRIPTION,
-    images: [
-      { url: PHOTOS.camino.src, width: PHOTOS.camino.width, height: PHOTOS.camino.height, alt: PHOTOS.camino.alt },
-    ],
-  },
-};
+  path: "/visita",
+});
 
 export default function VisitaPage() {
   return (

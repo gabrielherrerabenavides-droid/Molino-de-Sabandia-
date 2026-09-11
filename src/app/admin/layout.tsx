@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { AdminNav } from "@/components/admin/AdminNav";
 import { SITE } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -14,11 +14,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
       <div className="container-site pt-[calc(var(--header-h)+32px)]">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <p className="t-label">{SITE.name} · Administración</p>
-          <nav aria-label="Administración">
-            <Link href="/admin/reservas" className="link-line t-label text-volcan-900">
-              Reservas
-            </Link>
-          </nav>
+          <AdminNav />
         </div>
         <hr className="stone-rule mt-4" />
       </div>

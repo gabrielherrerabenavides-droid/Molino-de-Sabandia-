@@ -32,8 +32,9 @@ export async function POST(req: Request) {
     );
   }
 
+  // El código es la referencia visible; el token es lo único que abre la constancia.
   return NextResponse.json(
-    { ok: true, code: result.reserva.code, url: `/reservas/${result.reserva.code}` },
+    { ok: true, code: result.reserva.code, url: `/reservas/${result.reserva.token}` },
     { status: 201, headers: NO_STORE },
   );
 }

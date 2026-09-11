@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LEGAL_NAV, PHOTOS, SITE } from "@/content/site";
 import { BackToTop } from "@/components/layout/BackToTop";
+import { Year } from "@/components/ui/Year";
 
 type FooterColumn = { title: string; links: readonly { href: string; label: string }[] };
 
@@ -36,7 +37,6 @@ const COLUMNS: readonly FooterColumn[] = [
 const CREDIT_PHOTOS = ["fachada", "camino", "arboles", "escalera", "contrafuertes", "historica", "panoramica"] as const;
 
 export function SiteFooter() {
-  const year = new Date().getFullYear();
   // Los datos de contacto son literales en site.ts; se ensanchan a string para poder omitir los vacíos.
   const contact: { phone: string; email: string; facebook: string; instagram: string } = SITE.contact;
 
@@ -142,7 +142,7 @@ export function SiteFooter() {
 
       <div className="container-site flex flex-col gap-2 border-t border-sillar-50/10 py-6 text-[0.78rem] text-sillar-50/50 sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © {year} {SITE.name}. Todos los derechos reservados.
+          © <Year /> {SITE.name}. Todos los derechos reservados.
         </p>
         <p>Hecho en Arequipa.</p>
       </div>

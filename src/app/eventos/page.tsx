@@ -1,27 +1,20 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import { PageHero } from "@/components/ui/PageHero";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Button } from "@/components/ui/Button";
 import { Reveal, RevealItem } from "@/components/ui/Reveal";
-import { SITE, PHOTOS, EVENT_TYPES, SLOT_LABELS } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
+import { PHOTOS, EVENT_TYPES, SLOT_LABELS } from "@/content/site";
 
 const DESCRIPTION =
-  "Bodas, quinceañeros, sesiones fotográficas y eventos corporativos en los jardines, el patio de sillar y la campiña del Molino de Sabandía.";
+  "Bodas, quinceañeras, sesiones fotográficas y eventos corporativos en los jardines, el patio de sillar y la campiña del Molino de Sabandía.";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Eventos",
   description: DESCRIPTION,
-  alternates: { canonical: "/eventos" },
-  openGraph: {
-    title: `Eventos · ${SITE.name}`,
-    description: DESCRIPTION,
-    images: [
-      { url: PHOTOS.fachada.src, width: PHOTOS.fachada.width, height: PHOTOS.fachada.height, alt: PHOTOS.fachada.alt },
-    ],
-  },
-};
+  path: "/eventos",
+});
 
 const ESPACIOS = [
   {

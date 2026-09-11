@@ -105,7 +105,8 @@ export function PasoConfirmar({
       <div className="flex flex-col gap-5">
         <Casilla id="reserva-consent" checked={consent} onChange={onConsent} error={errores.consent}>
           Autorizo al Molino de Sabandía a tratar mis datos personales para gestionar esta solicitud, conforme a la
-          Ley 29733 de Protección de Datos Personales. Consulta la{" "}
+          Ley 29733 de Protección de Datos Personales. Tus datos se alojan en proveedores ubicados fuera del Perú
+          (Vercel, Neon, Resend) con las garantías descritas en la{" "}
           <Link href="/legal/privacidad" className="link-line text-ocre-500">
             política de privacidad
           </Link>

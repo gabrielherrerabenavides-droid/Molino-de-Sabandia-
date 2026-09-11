@@ -24,8 +24,10 @@ export { RESERVA_STATUSES, SLOTS };
 
 /** Documento almacenado en la colección `reservas`. */
 export type Reserva = Doc & {
-  /** Código público legible, p. ej. MS-2026-7K3Q. */
+  /** Código público legible, p. ej. MS-2026-7K3Q. Es una referencia, NO da acceso a nada. */
   code: string;
+  /** Token opaco de 130 bits: es lo único que abre `/reservas/<token>`. Nunca se muestra en la página. */
+  token: string;
   /** Slug de `EVENT_TYPES`. */
   eventType: string;
   /** Fecha del evento, YYYY-MM-DD (hora de Lima). */
@@ -43,6 +45,7 @@ export type Reserva = Doc & {
   source: "web";
   ip?: string;
   userAgent?: string;
+  /** Notas internas del molino. NO se publican ni se envían al cliente. */
   adminNotes?: string;
 };
 
@@ -148,11 +151,19 @@ export const reservaInputSchema = z
 
 export type ReservaInput = z.output<typeof reservaInputSchema>;
 
-/** Cuerpo del PATCH /api/admin/reservas/[id]. */
-export const reservaPatchSchema = z.object({
-  status: z.enum(RESERVA_STATUSES, { error: "Estado no válido." }),
-  adminNotes: z.string().trim().max(2000, "Como máximo 2000 caracteres.").optional(),
-});
+/**
+ * Cuerpo del PATCH /api/admin/reservas/[id]. Ambas claves son opcionales para
+ * poder guardar las notas internas sin cambiar el estado (y sin avisar al cliente),
+ * pero al menos una debe venir.
+ */
+export const reservaPatchSchema = z
+  .object({
+    status: z.enum(RESERVA_STATUSES, { error: "Estado no válido." }).optional(),
+    adminNotes: z.string().trim().max(2000, "Como máximo 2000 caracteres.").optional(),
+  })
+  .refine((v) => v.status !== undefined || v.adminNotes !== undefined, {
+    error: "Indica un estado o unas notas.",
+  });
 
 export type ReservaPatch = z.output<typeof reservaPatchSchema>;
 

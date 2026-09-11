@@ -61,7 +61,7 @@ Clases utilitarias listas en globals.css: `.t-hero`, `.t-display`, `.t-h2`, `.t-
 
 ## 7. Mapa de páginas y secciones
 - `/` Inicio: Hero (fachada-jardines, píldora "Abierto hasta las 17:00 h" según hora de Lima) → Quick links 01/02/03 (Historia, Sigue el agua, Tu visita) → Destacados (carrusel 3 tarjetas grandes con flechas) → Manifiesto "Un lugar, muchas historias" → Paneles partidos (dos fotos con pie en serif itálica) → El corazón del molino (diagrama del agua) → Franja SILLAR VIVO → Historia resumida con línea de tiempo 1621/1972/1973/Hoy → Panorámica (foto panoramica-sabandia con scroll horizontal por arrastre) → Eventos (CTA a reservas) → Tu visita (horarios, cómo llegar, mapa) → Footer.
-- `/historia`, `/visita`, `/galeria`, `/eventos`, `/reservas` (+ `/reservas/[codigo]`), `/contacto`, `/legal/privacidad`, `/legal/terminos`, `/legal/cookies`, `/libro-de-reclamaciones`, `/admin/reservas`, `not-found`.
+- `/historia`, `/visita`, `/galeria`, `/eventos`, `/reservas` (+ `/reservas/[token]`), `/contacto`, `/legal/privacidad`, `/legal/terminos`, `/legal/cookies`, `/libro-de-reclamaciones`, `/admin/reservas`, `not-found`.
 - Cada página interior abre con un "hero corto": eyebrow + `.t-display` + párrafo lead sobre sillar-50, con una imagen full-bleed 16:7 debajo.
 
 ## 8. Móvil (obligatorio, 390px de referencia)

@@ -13,10 +13,17 @@ const archivo = Archivo({
   display: "swap",
 });
 
+/**
+ * Solo itálica 400: la serif únicamente se usa en `.t-caption` y `.t-serif-i`,
+ * y ambas fijan `font-style: italic` (ninguna clase ni utilidad pide la
+ * variante recta ni un peso distinto). Pedir "normal" hacía que Next
+ * precargara un subset de ~38 kB por página que compite con el preload de la
+ * imagen LCP. Si algún día hace falta Playfair recto, se reañade aquí.
+ */
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["400", "500", "600"],
+  style: ["italic"],
+  weight: ["400"],
   variable: "--font-playfair",
   display: "swap",
 });

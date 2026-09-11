@@ -29,8 +29,8 @@ export const TERMINOS_SECTIONS: LegalSection[] = [
     title: "3. Solicitudes de reserva",
     paragraphs: [
       "El envío de un formulario de reserva (visita en grupo, evento, sesión fotográfica u otro) constituye una solicitud, no una reserva confirmada. La reserva solo se considera confirmada cuando el molino te lo comunica por escrito (correo electrónico, WhatsApp o el canal que corresponda), indicando fecha, horario y condiciones.",
-      "Señal o anticipo: [por definir por la administración].",
-      "Política de cancelación y reprogramación: [por definir por la administración]. Estas condiciones se te informarán al confirmar tu reserva.",
+      "Señal o anticipo: condiciones pendientes de publicación. Este sitio no cobra ningún importe. Si tu reserva requiere una señal, te comunicaremos por escrito el importe, el plazo y la forma de pago antes de cualquier cobro, y solo se considerará aceptada cuando la confirmes.",
+      "Política de cancelación y reprogramación: condiciones pendientes de publicación. Te informaremos por escrito, junto con la confirmación de tu reserva, las condiciones de cancelación y reprogramación aplicables a tu fecha.",
     ],
   },
   {

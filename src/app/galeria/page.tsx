@@ -1,20 +1,16 @@
-import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
 import { Container } from "@/components/ui/Container";
 import { GalleryGrid } from "@/components/sections/GalleryGrid";
-import { SITE } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 
-const DESCRIPTION = "Fotografías del Molino de Sabandía: su fachada de sillar, el mecanismo del agua, la campiña y su restauración de 1981.";
+const DESCRIPTION =
+  "Fotografías del Molino de Sabandía: su fachada de sillar, el mecanismo del agua, la campiña y su restauración de 1973, en fotografías de archivo de 1981.";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Galería",
   description: DESCRIPTION,
-  alternates: { canonical: "/galeria" },
-  openGraph: {
-    title: `Galería · ${SITE.name}`,
-    description: DESCRIPTION,
-  },
-};
+  path: "/galeria",
+});
 
 export default function GaleriaPage() {
   return (

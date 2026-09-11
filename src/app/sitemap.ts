@@ -1,7 +1,12 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/content/site";
 
-/** Rutas públicas del sitio. Las páginas de constancia ([codigo]) son noindex y no se listan aquí. */
+/**
+ * Rutas públicas del sitio. Sin `lastModified`: un `new Date()` en cada build
+ * marcaría todas las páginas como modificadas hoy, lo que es falso y hace que
+ * los buscadores dejen de fiarse del dato. Las constancias por token y el área
+ * de administración no se listan (son noindex y están en robots.txt).
+ */
 const ROUTES = [
   "",
   "/historia",
@@ -17,9 +22,5 @@ const ROUTES = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
-  return ROUTES.map((route) => ({
-    url: `${SITE.url}${route}`,
-    lastModified,
-  }));
+  return ROUTES.map((route) => ({ url: `${SITE.url}${route}` }));
 }

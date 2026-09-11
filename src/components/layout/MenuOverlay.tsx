@@ -18,11 +18,27 @@ export function MenuOverlay() {
   const reduced = useReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
   const lastPath = useRef(pathname);
+  /** Elemento que abrió el menú; al cerrar se le devuelve el foco (APG Modal Dialog). */
+  const trigger = useRef<HTMLElement | null>(null);
+
+  /**
+   * Cierre por navegación: no se devuelve el foco al botón, sería robárselo a la
+   * página nueva. Si el enlace apunta a la ruta actual no hay navegación, así
+   * que ahí sí se conserva el disparador.
+   */
+  const closeForNav = useCallback(
+    (href: string) => () => {
+      if (href !== pathname) trigger.current = null;
+      closeMenu();
+    },
+    [closeMenu, pathname],
+  );
 
   // Cierra al navegar.
   useEffect(() => {
     if (lastPath.current !== pathname) {
       lastPath.current = pathname;
+      trigger.current = null;
       closeMenu();
     }
   }, [pathname, closeMenu]);
@@ -79,6 +95,27 @@ export function MenuOverlay() {
     return () => window.clearTimeout(timer);
   }, [open]);
 
+  // Guarda el disparador al abrir y le devuelve el foco al cerrar (X, Escape o
+  // clic fuera). Sin esto el foco cae a <body> al desmontar el panel.
+  useEffect(() => {
+    if (open) {
+      const active = document.activeElement;
+      trigger.current =
+        active instanceof HTMLElement && active !== document.body
+          ? active
+          : document.querySelector<HTMLElement>('[aria-controls="menu-principal"]');
+      return;
+    }
+    const el = trigger.current;
+    trigger.current = null;
+    if (!el) return; // montaje inicial (open === false): no roba el foco
+    // rAF: evita la carrera con el desmontaje de AnimatePresence.
+    const id = window.requestAnimationFrame(() => {
+      if (document.body.contains(el)) el.focus();
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [open]);
+
   const photo = PHOTOS.camino;
 
   return (
@@ -120,7 +157,7 @@ export function MenuOverlay() {
                     >
                       <Link
                         href={item.href}
-                        onClick={closeMenu}
+                        onClick={closeForNav(item.href)}
                         aria-current={pathname === item.href ? "page" : undefined}
                         className="group flex items-baseline gap-5 py-[clamp(10px,1.6vh,20px)] transition-colors duration-300 hover:text-ocre-300"
                       >
@@ -139,7 +176,7 @@ export function MenuOverlay() {
                   }
                   className="mt-[clamp(28px,4vh,48px)] flex flex-wrap items-center gap-4"
                 >
-                  <Link href="/reservas" onClick={closeMenu} className="btn btn-light">
+                  <Link href="/reservas" onClick={closeForNav("/reservas")} className="btn btn-light">
                     Reservar un evento
                   </Link>
                   <OpenStatus tone="dark" />
@@ -188,7 +225,7 @@ export function MenuOverlay() {
                 <ul className="flex flex-col gap-2">
                   {LEGAL_NAV.map((item) => (
                     <li key={item.href}>
-                      <Link href={item.href} onClick={closeMenu} className="link-line text-sm text-sillar-50/60 transition-colors hover:text-sillar-50">
+                      <Link href={item.href} onClick={closeForNav(item.href)} className="link-line text-sm text-sillar-50/60 transition-colors hover:text-sillar-50">
                         {item.label}
                       </Link>
                     </li>

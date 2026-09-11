@@ -15,11 +15,18 @@ function credentials(): { user: string; password: string } | null {
   return { user, password };
 }
 
-/** Comparación de tiempo constante para no filtrar información por latencia. */
-function safeEqual(a: string, b: string): boolean {
-  const len = Math.max(a.length, b.length);
-  let diff = a.length ^ b.length;
-  for (let i = 0; i < len; i += 1) diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
+async function sha256(value: string): Promise<Uint8Array> {
+  return new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value)));
+}
+
+/**
+ * Comparación en tiempo constante: compara los resúmenes SHA-256 (32 bytes fijos),
+ * así el número de operaciones no depende de la longitud del intento ni del secreto.
+ */
+async function safeEqual(a: string, b: string): Promise<boolean> {
+  const [da, db] = await Promise.all([sha256(a), sha256(b)]);
+  let diff = 0;
+  for (let i = 0; i < da.length; i += 1) diff |= da[i] ^ db[i];
   return diff === 0;
 }
 
@@ -34,7 +41,7 @@ function decodeBase64Utf8(value: string): string | null {
 }
 
 /** Comprueba la cabecera `Authorization` contra ADMIN_USER / ADMIN_PASSWORD. */
-export function checkAdminAuth(authorization: string | null): AdminAuthResult {
+export async function checkAdminAuth(authorization: string | null): Promise<AdminAuthResult> {
   const creds = credentials();
   if (!creds) return "unconfigured";
   if (!authorization || !/^Basic /i.test(authorization)) return "unauthorized";
@@ -42,8 +49,10 @@ export function checkAdminAuth(authorization: string | null): AdminAuthResult {
   if (decoded === null) return "unauthorized";
   const sep = decoded.indexOf(":");
   if (sep < 0) return "unauthorized";
-  const okUser = safeEqual(decoded.slice(0, sep), creds.user);
-  const okPassword = safeEqual(decoded.slice(sep + 1), creds.password);
+  const [okUser, okPassword] = await Promise.all([
+    safeEqual(decoded.slice(0, sep), creds.user),
+    safeEqual(decoded.slice(sep + 1), creds.password),
+  ]);
   return okUser && okPassword ? "ok" : "unauthorized";
 }
 

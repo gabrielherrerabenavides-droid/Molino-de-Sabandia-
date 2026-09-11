@@ -3,21 +3,16 @@ import Link from "next/link";
 import { PageHero } from "@/components/ui/PageHero";
 import { ReservaWizard } from "@/components/reservas/ReservaWizard";
 import { SITE } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 
 const DESCRIPCION =
-  "Solicita una fecha para tu boda, sesión fotográfica, quinceañero, evento corporativo o visita en grupo en el Molino de Sabandía. Te confirmamos la disponibilidad en 24 a 48 horas.";
+  "Solicita una fecha para tu boda, sesión fotográfica, quinceañera, evento corporativo o visita en grupo en el Molino de Sabandía. Te confirmamos la disponibilidad en 24 a 48 horas.";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Reservas",
   description: DESCRIPCION,
-  openGraph: {
-    type: "website",
-    title: `Reservas · ${SITE.name}`,
-    description: DESCRIPCION,
-    url: "/reservas",
-  },
-  alternates: { canonical: "/reservas" },
-};
+  path: "/reservas",
+});
 
 export default function ReservasPage() {
   const email: string = SITE.contact.email;

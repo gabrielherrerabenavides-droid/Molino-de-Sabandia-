@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { reclamacionSchema } from "@/lib/reclamaciones/schema";
-import { crearReclamacion } from "@/lib/reclamaciones/service";
+import { camposConError, reclamacionSchema } from "@/lib/reclamaciones/schema";
+import { REGISTRO_NO_DISPONIBLE, crearReclamacion, registroDisponible } from "@/lib/reclamaciones/service";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
@@ -10,6 +10,12 @@ export async function POST(request: Request) {
       { ok: false, error: "Demasiadas solicitudes. Intenta de nuevo en unos minutos." },
       { status: 429 }
     );
+  }
+
+  // Sin almacenamiento duradero no podemos conservar la hoja los 2 años que exige
+  // el D.S. N.º 011-2011-PCM: preferimos no recoger los datos personales.
+  if (!registroDisponible()) {
+    return NextResponse.json({ ok: false, error: REGISTRO_NO_DISPONIBLE }, { status: 503 });
   }
 
   let body: unknown;
@@ -27,14 +33,18 @@ export async function POST(request: Request) {
   const parsed = reclamacionSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { ok: false, error: parsed.error.issues[0]?.message ?? "Revisa los datos del formulario." },
+      {
+        ok: false,
+        error: parsed.error.issues[0]?.message ?? "Revisa los datos del formulario.",
+        campos: camposConError(parsed.error),
+      },
       { status: 400 }
     );
   }
 
   try {
     const reclamacion = await crearReclamacion(parsed.data);
-    return NextResponse.json({ ok: true, code: reclamacion.code });
+    return NextResponse.json({ ok: true, url: `/libro-de-reclamaciones/${reclamacion.token}` });
   } catch {
     return NextResponse.json(
       { ok: false, error: "No pudimos registrar tu hoja de reclamación. Intenta de nuevo más tarde." },

@@ -11,7 +11,7 @@ import { listarReservas, reservasToCsv } from "@/lib/reservas/service";
 const NO_STORE = { "cache-control": "no-store" };
 
 export async function GET(req: Request) {
-  const auth = checkAdminAuth(req.headers.get("authorization"));
+  const auth = await checkAdminAuth(req.headers.get("authorization"));
   if (auth !== "ok") return adminAuthResponse(auth);
 
   const params = new URL(req.url).searchParams;

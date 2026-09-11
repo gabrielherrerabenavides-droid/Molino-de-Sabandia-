@@ -45,7 +45,12 @@ export function Destacados() {
   const slide = SLIDES[index];
 
   return (
-    <section id="destacados" aria-labelledby="destacados-title" className="container-site pt-[clamp(48px,7vw,110px)] pb-[clamp(56px,8vw,130px)]">
+    <section
+      id="destacados"
+      aria-labelledby="destacados-title"
+      aria-roledescription="carrusel"
+      className="container-site pt-[clamp(48px,7vw,110px)] pb-[clamp(56px,8vw,130px)]"
+    >
       <div className="flex flex-wrap items-end justify-between gap-6 pb-[clamp(20px,3vw,40px)]">
         <div>
           <Eyebrow tone="ocre" className="mb-4">
@@ -56,7 +61,7 @@ export function Destacados() {
           </h2>
         </div>
         <div className="flex items-center gap-5">
-          <p className="t-mono-num text-muted" aria-live="polite">
+          <p className="t-mono-num text-muted">
             <span className="text-volcan-900">{String(index + 1).padStart(2, "0")}</span>
             <span aria-hidden="true"> / </span>
             {String(SLIDES.length).padStart(2, "0")}
@@ -107,7 +112,10 @@ export function Destacados() {
                 src={slide.photo.src}
                 alt={slide.photo.alt}
                 fill
-                sizes="(min-width: 1024px) 62vw, 100vw"
+                /* Mismo `sizes` que el hero y que PageHero: la primera diapositiva
+                   reutiliza la variante de PHOTOS.fachada ya precargada en vez de
+                   descargar un segundo candidato del srcset. */
+                sizes="100vw"
                 className="photo-grade object-cover"
                 draggable={false}
               />
@@ -117,8 +125,18 @@ export function Destacados() {
         </motion.div>
 
         <div className="flex flex-col justify-center">
-          <div>
-            <AnimatePresence mode="wait">
+          {/* Región viva estable (no keyed): al montar el nuevo bloque, el lector
+              de pantalla anuncia "Diapositiva 2 de 3: <título>" y el resto del texto. */}
+          <div
+            role="group"
+            aria-roledescription="diapositiva"
+            aria-label={`Diapositiva ${index + 1} de ${SLIDES.length}: ${slide.title}`}
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {/* `initial={false}`: la primera diapositiva se sirve visible (sin
+                `opacity:0` en línea en el HTML); los cambios posteriores sí animan. */}
+            <AnimatePresence initial={false} mode="wait">
               <motion.div
                 key={slide.title}
                 initial={{ opacity: 0, y: 14 * direction }}

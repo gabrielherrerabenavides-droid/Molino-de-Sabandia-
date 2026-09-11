@@ -14,8 +14,18 @@ const contactoSchema = z.object({
   mensaje: z.string().trim().min(10, "Cuéntanos un poco más en tu mensaje").max(4000),
   consentimiento: z.literal(true, { error: "Debes aceptar el tratamiento de tus datos" }),
   // Honeypot: los bots suelen rellenar cualquier campo extra; los humanos lo dejan vacío.
-  empresa: z.string().max(0).optional(),
+  // Sin `.max(0)`: un error de validación delataría la trampa.
+  empresa: z.string().optional(),
 });
+
+function host(value: string | null): string | null {
+  if (!value) return null;
+  try {
+    return new URL(value).host;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: Request) {
   const { ok: withinLimit } = rateLimit(clientKey(request, "contacto"));
@@ -24,6 +34,16 @@ export async function POST(request: Request) {
       { ok: false, error: "Demasiadas solicitudes. Intenta de nuevo en unos minutos." },
       { status: 429 }
     );
+  }
+
+  // El endpoint envía correo a una dirección que indica quien lo llama: se restringe
+  // a peticiones del propio sitio para que no sirva de relé desde otra página.
+  const origin = request.headers.get("origin");
+  if (origin !== null && host(origin) !== host(SITE.url)) {
+    return NextResponse.json({ ok: false, error: "Solicitud inválida." }, { status: 403 });
+  }
+  if (!request.headers.get("content-type")?.includes("application/json")) {
+    return NextResponse.json({ ok: false, error: "Solicitud inválida." }, { status: 415 });
   }
 
   let body: unknown;
@@ -41,8 +61,13 @@ export async function POST(request: Request) {
 
   const parsed = contactoSchema.safeParse(body);
   if (!parsed.success) {
+    const campos: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const key = issue.path.map(String).join(".") || "_";
+      if (!(key in campos)) campos[key] = issue.message;
+    }
     return NextResponse.json(
-      { ok: false, error: parsed.error.issues[0]?.message ?? "Revisa los datos del formulario." },
+      { ok: false, error: parsed.error.issues[0]?.message ?? "Revisa los datos del formulario.", campos },
       { status: 400 }
     );
   }
@@ -71,11 +96,16 @@ export async function POST(request: Request) {
     );
   }
 
-  // Copia de cortesía al remitente, sin bloquear la respuesta si falla.
+  // Acuse de recibo sin eco del texto del remitente: el asunto viene del enum,
+  // así que el correo no puede transportar contenido escrito por un tercero.
   await sendMail({
     to: email,
-    subject: `Copia de tu mensaje a ${SITE.name}`,
-    html: mailLayout("Recibimos tu mensaje", `<p>Hola ${escapeHtml(nombre)}:</p><p>Gracias por escribirnos. Este es un resumen de tu mensaje:</p>${resumenHtml}`),
+    subject: `Recibimos tu mensaje a ${SITE.name}`,
+    html: mailLayout(
+      "Recibimos tu mensaje",
+      `<p>Recibimos tu mensaje sobre ${escapeHtml(asunto)}; te responderemos en 24–48 h.</p>
+       <p style="color:#63655c;font-size:13px">Si no fuiste tú quien escribió, ignora este correo.</p>`
+    ),
   });
 
   return NextResponse.json({ ok: true });

@@ -15,16 +15,17 @@ export const COOKIES_SECTIONS: LegalSection[] = [
     id: "que-usamos",
     title: "2. Qué usamos en este sitio",
     paragraphs: [
-      "Este sitio no usa cookies de analítica ni de publicidad de terceros. Solo guardamos, en el almacenamiento local de tu navegador (no en una cookie de servidor), tu preferencia de consentimiento bajo la clave técnica \"msb-cookies\", para recordar si ya aceptaste o rechazaste el uso de datos personales en los formularios.",
-      "Si en el futuro incorporamos un mapa de Google Maps embebido en alguna página (como en Tu visita), ten en cuenta que Google puede establecer sus propias cookies técnicas o de preferencia al cargar ese mapa, conforme a su propia política de privacidad, ajena a nosotros.",
+      "Este sitio no instala cookies propias ni de analítica o publicidad de terceros. Solo empleamos almacenamiento técnico en tu navegador, imprescindible para que el sitio funcione (por ejemplo, para recordar preferencias de accesibilidad o el estado de un formulario que estás completando).",
+      "Como no usamos cookies no esenciales, no mostramos un aviso de consentimiento de cookies: no hay nada que consentir. Sí seguimos pidiendo tu consentimiento, cuando corresponde, para tratar los datos personales que escribes en los formularios; eso se explica en la Política de privacidad.",
+      "El único recurso de terceros del sitio es el mapa de Google Maps, que aparece en la página de inicio, en Contacto y en Tu visita. Ese mapa no se carga solo: mostramos un marcador de posición con la dirección y un enlace directo a Google Maps, y el mapa se inserta únicamente si pulsas \"Cargar mapa de Google\". A partir de ese momento Google puede establecer sus propias cookies conforme a su política de privacidad, ajena a nosotros.",
     ],
   },
   {
     id: "como-desactivarlas",
-    title: "3. Cómo desactivarlas",
+    title: "3. Cómo evitarlas o borrarlas",
     paragraphs: [
-      "Puedes borrar el almacenamiento local de tu navegador en cualquier momento desde su configuración de privacidad (por ejemplo, \"Borrar datos de navegación\" en Chrome o Safari). Esto no afecta tu acceso al contenido del sitio, aunque puede que tengamos que pedirte de nuevo tu consentimiento en los formularios.",
-      "Si prefieres no cargar el mapa embebido de Google en la página Tu visita, puedes usar directamente el enlace a Google Maps que ofrecemos junto al mapa.",
+      "Si prefieres no cargar el mapa embebido de Google, simplemente no pulses el botón que lo carga: puedes usar el enlace \"Abrir en Google Maps\" que acompaña siempre al marcador de posición, que te lleva al sitio de Google en una pestaña nueva.",
+      "Puedes borrar el almacenamiento local y las cookies de tu navegador en cualquier momento desde su configuración de privacidad (por ejemplo, \"Borrar datos de navegación\" en Chrome o Safari). Esto no afecta tu acceso al contenido del sitio.",
     ],
   },
   {

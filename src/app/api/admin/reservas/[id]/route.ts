@@ -1,6 +1,8 @@
 /**
- * PATCH /api/admin/reservas/[id] — cambia el estado y las notas internas.
- * Al confirmar o cancelar se avisa al cliente por correo (ver lib/reservas/mail).
+ * PATCH /api/admin/reservas/[id] — cambia el estado y/o las notas internas.
+ * Ambos campos son opcionales: enviar solo `adminNotes` guarda la nota sin avisar
+ * al cliente. Al confirmar o cancelar sí se envía correo (ver lib/reservas/mail),
+ * y confirmar puede responder 409 si la franja ya está ocupada.
  */
 import { NextResponse } from "next/server";
 import { adminAuthResponse, checkAdminAuth } from "@/lib/reservas/auth";
@@ -10,7 +12,7 @@ import { actualizarEstado } from "@/lib/reservas/service";
 const NO_STORE = { "cache-control": "no-store" };
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
-  const auth = checkAdminAuth(req.headers.get("authorization"));
+  const auth = await checkAdminAuth(req.headers.get("authorization"));
   if (auth !== "ok") return adminAuthResponse(auth);
 
   const { id } = await ctx.params;

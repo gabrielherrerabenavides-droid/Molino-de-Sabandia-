@@ -13,7 +13,18 @@ export function rateLimit(key: string, limit = 5, windowMs = 10 * 60 * 1000): { 
   return { ok: true, remaining: limit - b.count };
 }
 
+/**
+ * Clave por cliente. Se prefiere `x-real-ip` porque es la cabecera que fija la
+ * propia plataforma (Vercel) con la IP de la conexión TCP: el visitante no puede
+ * falsearla. `x-forwarded-for` sí es una lista que el cliente puede prefijar con
+ * valores inventados, y como el proxy de confianza añade la IP real al final, la
+ * PRIMERA entrada es la que el cliente controla. Se usa solo como respaldo (por
+ * ejemplo en `next start` local, donde no hay `x-real-ip`), asumiendo esa
+ * limitación: en producción detrás de Vercel siempre gana `x-real-ip`.
+ */
 export function clientKey(req: Request, scope: string) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? req.headers.get("x-real-ip") ?? "anon";
+  const realIp = req.headers.get("x-real-ip")?.trim();
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const ip = (realIp || forwarded || "anon").slice(0, 45);
   return `${scope}:${ip}`;
 }

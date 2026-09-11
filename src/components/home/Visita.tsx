@@ -4,8 +4,7 @@ import { SITE } from "@/content/site";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { OpenStatus } from "@/components/ui/OpenStatus";
-
-const MAP_EMBED = "https://www.google.com/maps?q=Molino+de+Saband%C3%ADa+Arequipa&output=embed";
+import { MapEmbed } from "@/components/sections/MapEmbed";
 
 function priceLabel(price: number | null) {
   return price === null ? "Por confirmar" : `${SITE.currency} ${price}`;
@@ -81,15 +80,9 @@ export function Visita() {
         </div>
 
         <Reveal delay={0.1} className="flex h-full flex-col">
-          <div className="relative aspect-4/3 w-full overflow-hidden border border-sillar-300 bg-sillar-100 lg:aspect-auto lg:min-h-[420px] lg:flex-1">
-            <iframe
-              src={MAP_EMBED}
-              title="Mapa de ubicación del Molino de Sabandía"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="absolute inset-0 size-full"
-              style={{ border: 0 }}
-            />
+          <div className="w-full overflow-hidden border border-sillar-300 bg-sillar-100 lg:min-h-[420px] lg:flex-1 [&>div]:h-full">
+            {/* El mapa solo se carga si el visitante lo pide: sin clic no hay petición a Google. */}
+            <MapEmbed />
           </div>
           <p className="t-label mt-4">Sabandía, Arequipa · {SITE.address.postalCode}</p>
         </Reveal>

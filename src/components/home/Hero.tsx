@@ -6,7 +6,6 @@ import Link from "next/link";
 import { ArrowDown, Pause, Play } from "lucide-react";
 import { motion, useAnimationControls, useReducedMotion } from "motion/react";
 import { PHOTOS, SITE } from "@/content/site";
-import { EASE } from "@/components/ui/Reveal";
 import { Words } from "@/components/ui/Words";
 import { OpenStatus } from "@/components/ui/OpenStatus";
 
@@ -53,38 +52,32 @@ export function Hero() {
       </div>
 
       <div className="container-site relative flex flex-1 flex-col pt-[calc(var(--header-h)+clamp(20px,5vh,56px))] pb-[clamp(20px,4vh,44px)]">
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.1, ease: EASE }}
-          className="t-label t-label-light max-w-[34ch] text-shade"
+        <p
+          className="rise-in t-label t-label-light max-w-[34ch] text-shade"
+          style={{ "--rise-y": "12px", "--rise-delay": "0.1s" } as React.CSSProperties}
         >
           Arequipa, Perú · 1621 — Arquitectura. Agua. Memoria.
-        </motion.p>
+        </p>
 
         <div className="mt-auto">
           <h1 className="t-hero text-shade">
             <Words lines={["Molino de", "Sabandía"]} onMount delay={0.2} stagger={0.05} y={40} />
           </h1>
 
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.55, ease: EASE }}
-            className="mt-[clamp(16px,2.4vh,28px)] max-w-[54ch]"
+          <div
+            className="rise-in mt-[clamp(16px,2.4vh,28px)] max-w-[54ch]"
+            style={{ "--rise-y": "18px", "--rise-delay": "0.55s" } as React.CSSProperties}
           >
             <p className="t-caption text-sillar-50/85 text-shade">{SITE.tagline}.</p>
             <p className="mt-3 text-[0.98rem] leading-relaxed text-sillar-50/75 text-shade">
               Cuatro siglos después, el agua del manantial sigue girando la rueda y las piedras siguen moliendo.
               Ven a verlo entre sillar, jardines y campiña.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7, ease: EASE }}
-            className="mt-[clamp(20px,3vh,36px)] flex flex-col gap-3 sm:flex-row sm:items-center"
+          <div
+            className="rise-in mt-[clamp(20px,3vh,36px)] flex flex-col gap-3 sm:flex-row sm:items-center"
+            style={{ "--rise-y": "18px", "--rise-delay": "0.7s" } as React.CSSProperties}
           >
             <a href="#destacados" className="btn btn-light">
               Entra al molino
@@ -92,14 +85,12 @@ export function Hero() {
             <Link href="/reservas" className="btn btn-ghost-light">
               Reservar un evento
             </Link>
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.9, delay: 0.9, ease: EASE }}
-          className="mt-[clamp(24px,4vh,52px)] flex items-end justify-between gap-4"
+        <div
+          className="rise-in mt-[clamp(24px,4vh,52px)] flex items-end justify-between gap-4"
+          style={{ "--rise-y": "0px", "--rise-delay": "0.9s" } as React.CSSProperties}
         >
           <div className="flex flex-col gap-3">
             <OpenStatus tone="light" />
@@ -134,7 +125,7 @@ export function Hero() {
               {photo.author} · {photo.year}
             </p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

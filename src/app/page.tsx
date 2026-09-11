@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SITE } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 import { Hero } from "@/components/home/Hero";
 import { QuickLinks } from "@/components/home/QuickLinks";
 import { Destacados } from "@/components/home/Destacados";
@@ -13,19 +14,15 @@ import { Visita } from "@/components/home/Visita";
 import { SillarBand } from "@/components/textures/SillarBand";
 import { WaterLine } from "@/components/textures/WaterLine";
 
+/**
+ * El layout define `title.template` ("%s · Molino de Sabandía"), así que la
+ * portada usa `absolute` para no repetir el nombre. `pageMetadata` recibe la
+ * frase sin la marca (la añade él en og:title y twitter:title) y aporta
+ * canonical, og:type/url/site_name e imagen.
+ */
 export const metadata: Metadata = {
+  ...pageMetadata({ title: SITE.tagline, description: SITE.description, path: "/" }),
   title: { absolute: `${SITE.name} — ${SITE.tagline}` },
-  description: SITE.description,
-  openGraph: {
-    type: "website",
-    locale: "es_PE",
-    url: "/",
-    siteName: SITE.name,
-    title: `${SITE.name} — ${SITE.tagline}`,
-    description: SITE.description,
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Fachada de sillar del Molino de Sabandía" }],
-  },
-  alternates: { canonical: "/" },
 };
 
 const jsonLd = {

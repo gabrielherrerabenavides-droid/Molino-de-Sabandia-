@@ -7,19 +7,33 @@ import { EstadoReserva } from "@/components/reservas/EstadoReserva";
 import { ResumenReserva } from "@/components/reservas/ResumenReserva";
 import { fechaLarga, franjaLabel } from "@/lib/reservas/format";
 import { eventTypeTitle } from "@/lib/reservas/schema";
-import { reservaPorCodigo } from "@/lib/reservas/service";
+import { reservaPorToken } from "@/lib/reservas/service";
+import { pageMetadata } from "@/lib/seo";
 
+/** Contiene datos personales: nunca en caché ni en buscadores. */
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata(props: PageProps<"/reservas/[codigo]">): Promise<Metadata> {
-  const { codigo } = await props.params;
-  const code = decodeURIComponent(codigo).toUpperCase();
-  return {
-    title: `Solicitud ${code}`,
+/**
+ * El título y el canonical NO incluyen el token (es el secreto del enlace) ni el
+ * código; `referrer: no-referrer` evita que el token viaje al salir de la página.
+ */
+export const metadata: Metadata = {
+  ...pageMetadata({
+    title: "Estado de tu solicitud",
     description: "Estado de tu solicitud de reserva en el Molino de Sabandía.",
-    alternates: { canonical: `/reservas/${code}` },
-    robots: { index: false, follow: false },
-  };
+    path: "/reservas",
+    noindex: true,
+  }),
+  referrer: "no-referrer",
+};
+
+/** Next entrega el segmento ya decodificado; un `%` suelto haría fallar la segunda pasada. */
+function decodificar(valor: string): string {
+  try {
+    return decodeURIComponent(valor);
+  } catch {
+    return valor;
+  }
 }
 
 const SIGUIENTES: Record<string, string> = {
@@ -31,9 +45,9 @@ const SIGUIENTES: Record<string, string> = {
     "Esta solicitud quedó cancelada. Si quieres proponer otra fecha, escríbenos y la revisamos contigo.",
 };
 
-export default async function ReservaCodigoPage(props: PageProps<"/reservas/[codigo]">) {
-  const { codigo } = await props.params;
-  const reserva = await reservaPorCodigo(decodeURIComponent(codigo));
+export default async function ReservaTokenPage(props: PageProps<"/reservas/[token]">) {
+  const { token } = await props.params;
+  const reserva = await reservaPorToken(decodificar(token));
   if (!reserva) notFound();
 
   const whatsapp: string = SITE.contact.whatsapp;
@@ -73,12 +87,6 @@ export default async function ReservaCodigoPage(props: PageProps<"/reservas/[cod
             <p className="t-label mb-3">Siguientes pasos</p>
             <p className="t-body max-w-prose-narrow text-muted">{SIGUIENTES[reserva.status]}</p>
 
-            {reserva.adminNotes && (
-              <p className="mt-6 border-l border-ocre-500 pl-4 text-[0.92rem] leading-relaxed text-volcan-700">
-                {reserva.adminNotes}
-              </p>
-            )}
-
             <div className="mt-8 flex flex-wrap gap-3">
               {whatsapp.length > 0 && (
                 <a
@@ -110,7 +118,8 @@ export default async function ReservaCodigoPage(props: PageProps<"/reservas/[cod
             <p className="t-label mb-1">Resumen de tu solicitud</p>
             <ResumenReserva filas={filas} />
             <p className="mt-6 text-[0.85rem] leading-relaxed text-muted">
-              Guarda este código: con él podemos encontrar tu solicitud. Esta página no aparece en buscadores.
+              Guarda este enlace: es privado y personal, no lo compartas. El código {reserva.code} nos sirve
+              para encontrar tu solicitud si nos escribes. Esta página no aparece en buscadores.
             </p>
           </div>
         </div>
