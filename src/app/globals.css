@@ -1,26 +1,286 @@
 @import "tailwindcss";
 
+/* ---------- Tokens (ver DESIGN.md §2–§4) ---------- */
+@theme {
+  --color-sillar-50: #f7f5ef;
+  --color-sillar-100: #efece3;
+  --color-sillar-200: #e3dfd2;
+  --color-sillar-300: #cfc9b8;
+  --color-volcan-950: #121311;
+  --color-volcan-900: #1b1c19;
+  --color-volcan-800: #262723;
+  --color-volcan-700: #3a3b36;
+  --color-muted: #63655c;
+  --color-ocre-500: #8a6a34;
+  --color-ocre-300: #c9a568;
+  --color-agua-500: #3f6f7a;
+  --color-agua-700: #2b4d55;
+  --color-campina-500: #5d7a3e;
+  --color-alerta: #b5533a;
+
+  --font-sans: var(--font-archivo), Arial, Helvetica, sans-serif;
+  --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
+
+  --ease-house: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius-sm: 4px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --gutter: clamp(20px, 5vw, 88px);
+  --header-h: 72px;
+  --section-y: clamp(72px, 10vw, 160px);
+  --ink: var(--color-volcan-900);
+  --paper: var(--color-sillar-50);
+  --line: var(--color-sillar-300);
+  color-scheme: light;
+}
+@media (max-width: 767px) {
+  :root { --header-h: 64px; }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/*
+ * A partir de aquí todo vive en la capa `components` para que las utilidades de
+ * Tailwind (que están en la capa `utilities`) puedan sobrescribir estas clases.
+ * Sin esta capa, `hidden`, `text-*` o `px-*` NO podrían modificar `.btn`,
+ * `.t-hero`, `.link-line`, etc.
+ */
+@layer components {
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* ---------- Base ---------- */
+  html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
-}
+  @media (max-width: 767px) { body { font-size: 16px; } }
+  ::selection { background: var(--color-ocre-300); color: var(--color-volcan-950); }
+  :focus-visible { outline: 2px solid var(--color-agua-500); outline-offset: 3px; }
+  img, video { display: block; max-width: 100%; height: auto; }
+  button { font: inherit; color: inherit; }
+  a { color: inherit; text-decoration: none; }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* ---------- Layout helpers ---------- */
+  .container-site { width: 100%; max-width: 1440px; margin-inline: auto; padding-inline: var(--gutter); }
+  .section { padding-block: var(--section-y); }
+  .full-bleed { width: 100vw; margin-inline: calc(50% - 50vw); }
+  .split { display: grid; grid-template-columns: 1fr; gap: 0; }
+  @media (min-width: 1024px) { .split { grid-template-columns: 1fr 1fr; } }
+
+  /* ---------- Tipografía (DESIGN.md §3) ---------- */
+  .t-hero {
+    font-family: var(--font-sans);
+    font-stretch: 125%;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.92;
+    font-size: clamp(2.6rem, 9vw, 9.5rem);
+    overflow-wrap: anywhere;
+  }
+  .t-display {
+    font-family: var(--font-sans);
+    font-stretch: 110%;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    font-size: clamp(2rem, 4.5vw, 4.25rem);
+  }
+  .t-h2 { font-family: var(--font-sans); font-stretch: 105%; font-weight: 500; letter-spacing: -0.015em; line-height: 1.08; font-size: clamp(1.6rem, 3vw, 2.6rem); }
+  .t-h3 { font-family: var(--font-sans); font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; font-size: clamp(1.15rem, 1.6vw, 1.4rem); }
+  .t-lead { font-size: clamp(1.1rem, 1.5vw, 1.35rem); line-height: 1.5; font-weight: 400; color: var(--color-volcan-700); }
+  .t-body { font-size: 1rem; line-height: 1.65; }
+  .t-label { font-family: var(--font-sans); font-weight: 500; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-muted); }
+  .t-label-ocre { font-family: var(--font-sans); font-weight: 500; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-ocre-500); }
+  .t-caption { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.1rem, 1.6vw, 1.6rem); line-height: 1.25; letter-spacing: -0.005em; }
+  .t-serif-i { font-family: var(--font-serif); font-style: italic; }
+  .t-num { font-family: var(--font-sans); font-stretch: 125%; font-weight: 300; letter-spacing: -0.03em; line-height: 1; font-size: clamp(2.5rem, 6vw, 5.5rem); }
+  .max-w-prose-narrow { max-width: 62ch; }
+
+  /* ---------- Enlaces y botones ---------- */
+  .link-line { position: relative; display: inline-block; }
+  .link-line::after {
+    content: ""; position: absolute; left: 0; bottom: -2px; height: 1px; width: 100%;
+    background: currentColor; transform: scaleX(0); transform-origin: left;
+    transition: transform 0.45s var(--ease-house);
+  }
+  .link-line:hover::after, .link-line:focus-visible::after { transform: scaleX(1); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+    min-height: 48px; padding: 0.85rem 1.6rem; border-radius: var(--radius-sm);
+    font-weight: 500; font-size: 0.95rem; letter-spacing: 0.02em; line-height: 1;
+    border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+    transition: background-color 0.3s var(--ease-house), color 0.3s var(--ease-house), border-color 0.3s var(--ease-house), transform 0.3s var(--ease-house);
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--color-volcan-950); color: var(--color-sillar-50); }
+  .btn-primary:hover { background: var(--color-ocre-500); }
+  .btn-light { background: var(--color-sillar-50); color: var(--color-volcan-950); }
+  .btn-light:hover { background: var(--color-ocre-300); }
+  .btn-ghost { background: transparent; color: currentColor; border-color: currentColor; }
+  .btn-ghost:hover { background: var(--color-volcan-950); color: var(--color-sillar-50); border-color: var(--color-volcan-950); }
+  .btn-ghost-light { background: transparent; color: var(--color-sillar-50); border-color: rgba(247, 245, 239, 0.6); }
+  .btn-ghost-light:hover { background: var(--color-sillar-50); color: var(--color-volcan-950); border-color: var(--color-sillar-50); }
+  .btn[disabled], .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+
+  /* ---------- Formularios ---------- */
+  .field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .field > label { font-weight: 500; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-volcan-700); }
+  .input {
+    width: 100%; min-height: 48px; padding: 0.75rem 0.9rem; font-size: 16px; line-height: 1.4;
+    background: #fff; color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    transition: border-color 0.25s var(--ease-house), box-shadow 0.25s var(--ease-house);
+  }
+  .input::placeholder { color: #9a9b92; }
+  .input:focus { outline: none; border-color: var(--color-agua-500); box-shadow: 0 0 0 3px rgba(63, 111, 122, 0.18); }
+  .input[aria-invalid="true"] { border-color: var(--color-alerta); }
+  textarea.input { min-height: 120px; resize: vertical; }
+  .field-error { font-size: 0.85rem; color: var(--color-alerta); }
+
+  /* ---------- Texturas de sillar (DESIGN.md §6) ---------- */
+  .grain { position: relative; }
+  .grain::after {
+    content: ""; position: fixed; inset: 0; z-index: 60; pointer-events: none;
+    opacity: 0.06; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px;
+  }
+  /* Aparejo de sillar: hiladas de 2 alturas con juntas desfasadas, ±3 % de tono, junta de 1px */
+  .sillar-pattern {
+    background-color: var(--color-sillar-50);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='90' viewBox='0 0 180 90'><g><rect x='0' y='0' width='90' height='45' fill='%23f5f2ea'/><rect x='90' y='0' width='90' height='45' fill='%23f7f4ed'/><rect x='-45' y='45' width='90' height='45' fill='%23f7f4ec'/><rect x='45' y='45' width='90' height='45' fill='%23f4f1e9'/><rect x='135' y='45' width='90' height='45' fill='%23f6f3eb'/></g><g stroke='%23efeadd' stroke-width='1' fill='none'><path d='M0 45.5H180M0 89.5H180M90.5 0V45M45.5 45V90M135.5 45V90'/></g><g stroke='%23fbfaf6' stroke-width='1' fill='none'><path d='M0 0.5H180M0 46.5H180M91.5 0V45M46.5 45V90M136.5 45V90'/></g></svg>");
+    background-size: 180px 90px;
+  }
+  .sillar-pattern-dark {
+    background-color: var(--color-volcan-950);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='90' viewBox='0 0 180 90'><g><rect x='0' y='0' width='90' height='45' fill='%23141513'/><rect x='90' y='0' width='90' height='45' fill='%23121311'/><rect x='-45' y='45' width='90' height='45' fill='%23151614'/><rect x='45' y='45' width='90' height='45' fill='%23121311'/><rect x='135' y='45' width='90' height='45' fill='%23131412'/></g><g stroke='%230e0f0d' stroke-width='1' fill='none'><path d='M0 45.5H180M0 89.5H180M90.5 0V45M45.5 45V90M135.5 45V90'/></g><g stroke='%231a1b18' stroke-width='1' fill='none'><path d='M0 0.5H180M0 46.5H180M91.5 0V45M46.5 45V90M136.5 45V90'/></g></svg>");
+    background-size: 180px 90px;
+  }
+  .stone-rule { height: 2px; border: 0; background: linear-gradient(to bottom, var(--color-sillar-300) 0 1px, #fff 1px 2px); }
+  .stone-rule-dark { height: 2px; border: 0; background: linear-gradient(to bottom, #0b0c0a 0 1px, #262723 1px 2px); }
+  .duotone { filter: sepia(0.55) contrast(1.05) brightness(0.85) saturate(0.75); }
+  /* Igualador de temperatura para las fotos de archivo (Wikimedia): las unifica
+     sin tocar el hero de portada ni la franja duotono. */
+  .photo-grade { filter: saturate(0.86) contrast(1.04) brightness(0.98); }
+
+  /* ---------- Utilidades de movimiento ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+  .no-scroll { overflow: hidden !important; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
+  /* ==================================================================
+     Añadidos del agente FOUNDATION + HOME.
+     Solo se AÑADE: no se renombra ni elimina nada de lo anterior.
+     Nota de cascada: estas reglas viven fuera de @layer, por lo que
+     ganan a las utilidades de Tailwind. Si necesitas variar un valor
+     tipográfico, usa una de estas clases en lugar de `text-*`.
+     ================================================================== */
+
+  /* ---------- Variantes tipográficas ---------- */
+  .t-label-light { color: rgba(247, 245, 239, 0.72); }
+  .t-label-inherit { color: inherit; }
+  .t-label-ocre-300 { color: var(--color-ocre-300); }
+  .t-lead-light { color: rgba(247, 245, 239, 0.8); }
+  .t-num-sm { font-size: clamp(2.1rem, 3.4vw, 3.4rem); }
+  .t-display-sm { font-size: clamp(1.7rem, 2.8vw, 2.5rem); }
+  .t-hero-band { font-size: clamp(2.6rem, 12vw, 9rem); }
+  .t-wordmark {
+    font-family: var(--font-sans);
+    font-stretch: 125%;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    line-height: 1.1;
+  }
+  .t-wordmark-sm { font-size: 11px; letter-spacing: 0.16em; }
+  .t-mono-num {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Anclas y saltos ---------- */
+  [id] { scroll-margin-top: calc(var(--header-h) + 24px); }
+  .skip-link {
+    position: fixed; top: 10px; left: 10px; z-index: 100;
+    padding: 0.75rem 1.1rem; border-radius: var(--radius-sm);
+    background: var(--color-volcan-950); color: var(--color-sillar-50);
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    transform: translateY(-250%);
+    transition: transform 0.3s var(--ease-house);
+  }
+  .skip-link:focus-visible { transform: translateY(0); }
+
+  /* ---------- Hero ---------- */
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(18, 19, 17, 0.42) 0%, rgba(18, 19, 17, 0.16) 40%, rgba(18, 19, 17, 0.78) 100%);
+  }
+  .hero-overlay-side {
+    background: linear-gradient(90deg, rgba(18, 19, 17, 0.42) 0%, rgba(18, 19, 17, 0) 55%);
+  }
+  .text-shade { text-shadow: 0 1px 28px rgba(18, 19, 17, 0.45); }
+
+  /* ---------- Panorámica ---------- */
+  .no-bar { scrollbar-width: none; -ms-overflow-style: none; }
+  .no-bar::-webkit-scrollbar { display: none; height: 0; }
+  .pano-img {
+    height: 45vh; width: auto; max-width: none;
+    min-height: 300px;
+    user-select: none; -webkit-user-drag: none;
+  }
+  @media (min-width: 768px) { .pano-img { height: 60vh; } }
+
+  /* ---------- Wordmark gigante del footer ---------- */
+  .footer-wordmark {
+    font-family: var(--font-sans);
+    font-stretch: 125%;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    line-height: 0.78;
+    font-size: clamp(3rem, 17.5vw, 15rem);
+    color: rgba(247, 245, 239, 0.1);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  /* ---------- Control de rango (sección Agua) ---------- */
+  .range { appearance: none; width: 100%; height: 2px; background: var(--color-sillar-300); cursor: pointer; }
+  .range::-webkit-slider-thumb {
+    appearance: none; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--color-agua-500); border: 2px solid var(--color-sillar-50); cursor: pointer;
+  }
+  .range::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--color-agua-500); border: 2px solid var(--color-sillar-50); cursor: pointer;
+  }
+  .range:focus-visible { outline: 2px solid var(--color-agua-500); outline-offset: 6px; }
+
+  /* ---------- Utilidades varias ---------- */
+  .hover-zoom img { transition: transform 1.2s var(--ease-house); }
+  .hover-zoom:hover img, .hover-zoom:focus-visible img { transform: scale(1.04); }
+  .arrow-slide { display: inline-block; transition: transform 0.45s var(--ease-house); }
+  .group:hover .arrow-slide { transform: translate(4px, -4px); }
+  .edge-line { box-shadow: inset 0 1px 0 var(--color-sillar-300); }
+  .edge-line-dark { box-shadow: inset 0 1px 0 #2c2e29; }
+
+  /* Botón compacto (header, banners). */
+  .btn-sm { min-height: 44px; padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+  .arrow-slide-x { display: inline-block; transition: transform 0.45s var(--ease-house); }
+  .group:hover .arrow-slide-x, .group:focus-visible .arrow-slide-x { transform: translateX(6px); }
+
 }
