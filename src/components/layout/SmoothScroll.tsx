@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { useMenu } from "@/components/layout/menu-context";
+import { SPLASH_CLASSES } from "@/lib/splash";
 
 let instance: Lenis | null = null;
 
@@ -61,9 +63,35 @@ export function SmoothScroll() {
   useEffect(() => {
     const lenis = getLenis();
     if (!lenis) return;
-    if (open) lenis.stop();
-    else lenis.start();
+    if (open) {
+      lenis.stop();
+      return;
+    }
+    // Durante el splash de la portada el scroll está bloqueado (src/lib/splash.ts):
+    // Lenis se reanuda exactamente cuando el script retira `splash-lock`.
+    const html = document.documentElement;
+    if (html.classList.contains("splash-lock")) {
+      lenis.stop();
+      const observer = new MutationObserver(() => {
+        if (!html.classList.contains("splash-lock")) {
+          observer.disconnect();
+          lenis.start();
+        }
+      });
+      observer.observe(html, { attributes: true, attributeFilter: ["class"] });
+      return () => observer.disconnect();
+    }
+    lenis.start();
   }, [open]);
+
+  // Una navegación interna cancela la introducción antes del pintado: la ruta
+  // nueva no hereda el bloqueo y volver a "/" no repite el splash.
+  const pathname = usePathname();
+  const initialPath = useRef(pathname);
+  useLayoutEffect(() => {
+    if (pathname === initialPath.current) return;
+    document.documentElement.classList.remove(...SPLASH_CLASSES);
+  }, [pathname]);
 
   return null;
 }

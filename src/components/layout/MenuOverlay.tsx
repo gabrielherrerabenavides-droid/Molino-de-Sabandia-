@@ -61,7 +61,10 @@ export function MenuOverlay() {
       if (event.key !== "Tab") return;
       const panel = panelRef.current;
       if (!panel) return;
-      const items = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.offsetParent !== null);
+      // getClientRects y no offsetParent: offsetParent es null en elementos
+      // position:fixed (Chrome/Safari), y el botón "Cerrar menú" pasa a fixed al
+      // recibir foco; con offsetParent quedaría fuera de la trampa estando enfocado.
+      const items = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.getClientRects().length > 0);
       if (items.length === 0) return;
       const first = items[0];
       const last = items[items.length - 1];
@@ -234,6 +237,17 @@ export function MenuOverlay() {
               </aside>
             </div>
           </div>
+
+          {/* Cierre propio del diálogo: con aria-modal, los lectores táctiles (sin
+              Escape) no alcanzan el botón del header. Último hijo para que el foco
+              inicial siga en "01 Inicio"; oculto salvo al recibir foco. */}
+          <button
+            type="button"
+            onClick={closeMenu}
+            className="btn btn-light fixed right-6 bottom-6 z-10 not-focus:sr-only"
+          >
+            Cerrar menú
+          </button>
         </motion.div>
       )}
     </AnimatePresence>

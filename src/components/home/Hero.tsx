@@ -1,132 +1,136 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowDown, Pause, Play } from "lucide-react";
-import { motion, useAnimationControls, useReducedMotion } from "motion/react";
-import { PHOTOS, SITE } from "@/content/site";
-import { Words } from "@/components/ui/Words";
+import { Pause, Play } from "lucide-react";
+import { PHOTOS } from "@/content/site";
 import { OpenStatus } from "@/components/ui/OpenStatus";
 
 const photo = PHOTOS.fachada;
 
-export function Hero() {
-  const reduced = useReducedMotion();
-  const [paused, setPaused] = useState(false);
-  const controls = useAnimationControls();
+/** Divide un texto en palabras y letras con índice global `--i` para el escalonado del titular. */
+function Letters({ text, start }: { text: string; start: number }) {
+  const words = text.split(" ");
+  let index = start;
+  return (
+    <>
+      {words.map((word, w) => (
+        <Fragment key={w}>
+          <span className="hero-word">
+            {Array.from(word).map((char, c) => {
+              const style = { "--i": index } as React.CSSProperties;
+              index += 1;
+              return (
+                <span key={c} className="hero-letter" style={style}>
+                  {char}
+                </span>
+              );
+            })}
+          </span>
+          {w < words.length - 1 ? " " : null}
+        </Fragment>
+      ))}
+    </>
+  );
+}
 
-  useEffect(() => {
-    if (reduced) {
-      controls.set({ scale: 1.02 });
-      return;
-    }
-    if (paused) {
-      controls.stop();
-      return;
-    }
-    void controls.start(
-      { scale: 1.08 },
-      { duration: 22, ease: "linear", repeat: Infinity, repeatType: "reverse" },
-    );
-  }, [paused, reduced, controls]);
+/**
+ * Splash de entrada: hiladas de sillar que se asientan una a una.
+ * Solo se ve cuando <html> tiene `splash-play` (primera carga de "/" en la sesión,
+ * ver `src/lib/splash.ts`). Sin JS o en visitas posteriores no se renderiza.
+ * Vive FUERA de la sección del hero porque esta aísla su contexto de apilamiento
+ * y el splash debe quedar por encima del header fijo.
+ */
+function Splash() {
+  return (
+    <div className="splash" aria-hidden="true">
+      <div className="flex flex-col items-center gap-5">
+        <svg viewBox="0 0 72 35" width="88" height="43" className="splash__wall">
+          {/* Hilada inferior primero, como se levanta un muro */}
+          <rect className="splash__block" style={{ "--b": 0 } as React.CSSProperties} x="0" y="19" width="16" height="16" />
+          <rect className="splash__block" style={{ "--b": 1 } as React.CSSProperties} x="19" y="19" width="34" height="16" />
+          <rect className="splash__block" style={{ "--b": 2 } as React.CSSProperties} x="56" y="19" width="16" height="16" />
+          <rect className="splash__block" style={{ "--b": 3 } as React.CSSProperties} x="0" y="0" width="34" height="16" />
+          <rect className="splash__block" style={{ "--b": 4 } as React.CSSProperties} x="37" y="0" width="35" height="16" />
+        </svg>
+        <p className="splash__label t-label t-label-light">Sabandía · Arequipa · 1621</p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Portada al estilo del Guggenheim Bilbao: solo fotografía a sangre, el nombre
+ * enorme arriba, el estado de apertura abajo a la izquierda y el control de
+ * movimiento abajo a la derecha. Todo lo demás vive debajo del pliegue.
+ *
+ * Secuencia de entrada (solo con `html.splash-play`, todo en CSS; los tiempos
+ * cuentan desde que la foto está lista, máx. 2,5 s de espera con el splash):
+ *   0,0–1,7 s  splash con las hiladas de sillar, que se retira
+ *   1,3–3,2 s  la fotografía aparece poco a poco (opacidad + escala)
+ *   2,5–4,2 s  el nombre entra letra a letra
+ *   3,4–4,3 s  header, estado y botón de pausa
+ * Cualquier tecla salta la introducción.
+ */
+export function Hero() {
+  const [paused, setPaused] = useState(false);
 
   return (
-    <section
-      aria-label="Molino de Sabandía"
-      className="relative isolate flex h-[100svh] min-h-[640px] flex-col overflow-hidden bg-volcan-950 text-sillar-50"
-    >
-      <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
-        <motion.div className="absolute inset-0" initial={{ scale: 1 }} animate={controls} style={{ willChange: "transform" }}>
-          <Image
-            src={photo.src}
-            alt={photo.alt}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </motion.div>
-        <div className="absolute inset-0 hero-overlay" />
-        <div className="absolute inset-0 hero-overlay-side" />
-      </div>
-
-      <div className="container-site relative flex flex-1 flex-col pt-[calc(var(--header-h)+clamp(20px,5vh,56px))] pb-[clamp(20px,4vh,44px)]">
-        <p
-          className="rise-in t-label t-label-light max-w-[34ch] text-shade"
-          style={{ "--rise-y": "12px", "--rise-delay": "0.1s" } as React.CSSProperties}
-        >
-          Arequipa, Perú · 1621 — Arquitectura. Agua. Memoria.
-        </p>
-
-        <div className="mt-auto">
-          <h1 className="t-hero text-shade">
-            <Words lines={["Molino de", "Sabandía"]} onMount delay={0.2} stagger={0.05} y={40} />
-          </h1>
-
-          <div
-            className="rise-in mt-[clamp(16px,2.4vh,28px)] max-w-[54ch]"
-            style={{ "--rise-y": "18px", "--rise-delay": "0.55s" } as React.CSSProperties}
-          >
-            <p className="t-caption text-sillar-50/85 text-shade">{SITE.tagline}.</p>
-            <p className="mt-3 text-[0.98rem] leading-relaxed text-sillar-50/75 text-shade">
-              Cuatro siglos después, el agua del manantial sigue girando la rueda y las piedras siguen moliendo.
-              Ven a verlo entre sillar, jardines y campiña.
-            </p>
+    <>
+      <Splash />
+      <section
+        aria-label="Portada"
+        data-paused={paused ? "true" : "false"}
+        className="relative isolate h-[100svh] overflow-hidden bg-volcan-950 text-sillar-50"
+      >
+        <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="hero-media absolute inset-0">
+            <div className="kenburns absolute inset-0">
+              <Image
+                src={photo.src}
+                alt=""
+                fill
+                priority
+                sizes="(max-aspect-ratio: 4/3) 145vh, 100vw"
+                className="hero-photo object-cover object-[50%_58%]"
+              />
+            </div>
           </div>
-
-          <div
-            className="rise-in mt-[clamp(20px,3vh,36px)] flex flex-col gap-3 sm:flex-row sm:items-center"
-            style={{ "--rise-y": "18px", "--rise-delay": "0.7s" } as React.CSSProperties}
-          >
-            <a href="#destacados" className="btn btn-light">
-              Entra al molino
-            </a>
-            <Link href="/reservas" className="btn btn-ghost-light">
-              Reservar un evento
-            </Link>
-          </div>
+          <div className="hero-veil absolute inset-0" />
         </div>
 
-        <div
-          className="rise-in mt-[clamp(24px,4vh,52px)] flex items-end justify-between gap-4"
-          style={{ "--rise-y": "0px", "--rise-delay": "0.9s" } as React.CSSProperties}
-        >
-          <div className="flex flex-col gap-3">
-            <OpenStatus tone="light" />
-            <a
-              href="#destacados"
-              aria-label="Bajar al contenido"
-              className="hidden items-center gap-2 text-sillar-50/70 transition-colors hover:text-sillar-50 sm:inline-flex"
-            >
-              <motion.span
-                aria-hidden="true"
-                animate={{ y: [0, 7, 0] }}
-                transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
-                className="inline-flex"
-              >
-                <ArrowDown size={16} strokeWidth={1.5} />
-              </motion.span>
-              <span className="t-label t-label-inherit">Desliza</span>
-            </a>
+        <div className="container-hero flex h-full flex-col pt-[calc(var(--header-h)+clamp(12px,5vh,64px))] pb-[clamp(20px,4.5vh,44px)]">
+          <div className="hero-name-wrap">
+            <h1 className="hero-name">
+              <span className="sr-only">Molino de Sabandía</span>
+              <span aria-hidden="true">
+                <span className="hero-name__strong">
+                  <Letters text="Molino" start={0} />
+                </span>{" "}
+                <span className="hero-name__light">
+                  <Letters text="de Sabandía" start={6} />
+                </span>
+              </span>
+            </h1>
           </div>
 
-          <div className="flex shrink-0 flex-col items-end gap-2">
+          <div data-intro="ui" className="mt-auto flex items-end justify-between gap-4">
+            <OpenStatus tone="plain" />
             <button
               type="button"
               onClick={() => setPaused((v) => !v)}
-              aria-pressed={paused}
-              className="inline-flex size-11 items-center justify-center rounded-full border border-sillar-50/40 text-sillar-50 transition-colors duration-300 hover:border-sillar-50 hover:bg-sillar-50 hover:text-volcan-950"
+              className="inline-flex size-12 shrink-0 items-center justify-center rounded-full border border-sillar-50/75 text-sillar-50 transition-colors duration-300 hover:bg-sillar-50 hover:text-volcan-950 md:size-14"
             >
               <span className="sr-only">{paused ? "Reanudar movimiento" : "Pausar movimiento"}</span>
-              {paused ? <Play size={15} strokeWidth={1.6} aria-hidden="true" /> : <Pause size={15} strokeWidth={1.6} aria-hidden="true" />}
+              {paused ? (
+                <Play size={18} strokeWidth={1.4} aria-hidden="true" />
+              ) : (
+                <Pause size={18} strokeWidth={1.4} aria-hidden="true" />
+              )}
             </button>
-            <p className="max-w-[24ch] text-right text-[0.64rem] leading-tight tracking-[0.08em] text-sillar-50/55 uppercase">
-              {photo.author} · {photo.year}
-            </p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

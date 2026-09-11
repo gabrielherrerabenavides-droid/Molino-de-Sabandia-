@@ -1,7 +1,7 @@
 "use client";
 
-import { useId, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { useId, useRef, useState } from "react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal, RevealItem } from "@/components/ui/Reveal";
 import { WaterLine } from "@/components/textures/WaterLine";
@@ -31,6 +31,12 @@ export function Agua() {
   const reduced = useReducedMotion();
   const [speed, setSpeed] = useState(1);
   const sliderId = useId();
+  const svgRef = useRef<SVGSVGElement>(null);
+  // Los bucles infinitos (stroke-dashoffset y rotate de <g>) se pintan en el hilo
+  // principal: solo corren con el esquema a la vista (±200px). Fuera de ella, cada
+  // pieza vuelve a su estado 0, que es desde donde arranca al volver a entrar.
+  const inView = useInView(svgRef, { margin: "200px 0px" });
+  const run = !reduced && inView;
 
   const wheelDuration = 18 / speed;
   const stoneDuration = 26 / speed;
@@ -71,6 +77,7 @@ export function Agua() {
 
         <Reveal className="mt-[clamp(28px,4vw,56px)] max-w-none">
           <svg
+            ref={svgRef}
             viewBox="0 0 880 400"
             role="img"
             aria-label="Esquema del principio hidráulico: el canal lleva el agua a la rueda, la rueda gira y el eje mueve la piedra de moler."
@@ -92,8 +99,8 @@ export function Agua() {
               strokeLinecap="round"
               strokeDasharray="26 34"
               initial={{ strokeDashoffset: 0 }}
-              animate={reduced ? { strokeDashoffset: 0 } : { strokeDashoffset: -240 }}
-              transition={reduced ? { duration: 0 } : { duration: waterDuration, repeat: Infinity, ease: "linear" }}
+              animate={run ? { strokeDashoffset: -240 } : { strokeDashoffset: 0 }}
+              transition={run ? { duration: waterDuration, repeat: Infinity, ease: "linear" } : { duration: 0 }}
             />
             <path d="M18 78H292c14 0 20 12 28 24l40 52" stroke="var(--color-agua-500)" strokeOpacity="0.18" strokeWidth="5" strokeLinecap="round" />
 
@@ -106,8 +113,8 @@ export function Agua() {
               strokeLinecap="round"
               strokeDasharray="22 40"
               initial={{ strokeDashoffset: 0 }}
-              animate={reduced ? { strokeDashoffset: 0 } : { strokeDashoffset: -248 }}
-              transition={reduced ? { duration: 0 } : { duration: waterDuration * 1.3, repeat: Infinity, ease: "linear" }}
+              animate={run ? { strokeDashoffset: -248 } : { strokeDashoffset: 0 }}
+              transition={run ? { duration: waterDuration * 1.3, repeat: Infinity, ease: "linear" } : { duration: 0 }}
             />
             <g stroke="var(--color-volcan-700)" strokeWidth="1.5" strokeOpacity="0.55">
               <path d="M8 330h392M8 372h330" />
@@ -117,8 +124,8 @@ export function Agua() {
             <g>
               <motion.g
                 style={{ transformBox: "fill-box" }}
-                animate={reduced ? { rotate: 0 } : { rotate: 360 }}
-                transition={reduced ? { duration: 0 } : { duration: wheelDuration, repeat: Infinity, ease: "linear" }}
+                animate={run ? { rotate: 360 } : { rotate: 0 }}
+                transition={run ? { duration: wheelDuration, repeat: Infinity, ease: "linear" } : { duration: 0 }}
               >
                 <circle cx="430" cy="230" r="112" stroke="var(--color-volcan-700)" strokeWidth="2" />
                 <circle cx="430" cy="230" r="96" stroke="var(--color-volcan-700)" strokeWidth="1" strokeOpacity="0.4" />
@@ -149,8 +156,8 @@ export function Agua() {
             <g>
               <motion.g
                 style={{ transformBox: "fill-box" }}
-                animate={reduced ? { rotate: 0 } : { rotate: -360 }}
-                transition={reduced ? { duration: 0 } : { duration: stoneDuration, repeat: Infinity, ease: "linear" }}
+                animate={run ? { rotate: -360 } : { rotate: 0 }}
+                transition={run ? { duration: stoneDuration, repeat: Infinity, ease: "linear" } : { duration: 0 }}
               >
                 <circle cx="752" cy="230" r="62" fill="var(--color-sillar-200)" stroke="var(--color-volcan-700)" strokeWidth="2" />
                 {FURROWS.map((angle) => (

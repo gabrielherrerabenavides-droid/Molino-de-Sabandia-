@@ -9,16 +9,17 @@ const FALLBACK = `Todos los días · ${SITE.hours.open} – ${SITE.hours.close} 
 
 /**
  * Píldora de estado de apertura. El cálculo real se hace en el cliente
- * (hora de Lima) para evitar desajustes de hidratación; hasta entonces
- * muestra el horario fijo.
+ * (hora de Lima) para evitar desajustes de hidratación; hasta entonces (HTML
+ * del servidor, antes de hidratar o sin JS) muestra el horario fijo con un
+ * punto neutro y sin halo: nunca afirma "abierto" sin saberlo.
  */
-export function OpenStatus({ tone = "light", className }: { tone?: "light" | "dark" | "ink"; className?: string }) {
-  const [status, setStatus] = useState<{ isOpen: boolean; label: string } | null>(null);
+export function OpenStatus({ tone = "light", className }: { tone?: "light" | "dark" | "ink" | "plain"; className?: string }) {
+  const [status, setStatus] = useState<{ state: "open" | "later" | "closed"; label: string } | null>(null);
 
   useEffect(() => {
     const tick = () => {
       const next = getOpenStatus();
-      setStatus({ isOpen: next.isOpen, label: next.label });
+      setStatus({ state: next.state, label: next.label });
     };
     tick();
     const id = window.setInterval(tick, 60_000);
@@ -26,7 +27,30 @@ export function OpenStatus({ tone = "light", className }: { tone?: "light" | "da
   }, []);
 
   const label = status?.label ?? FALLBACK;
-  const dotOpen = status ? status.isOpen : true;
+  const dotOpen = status?.state === "open";
+  // Neutro hasta conocer el estado · verde abierto · ocre abre más tarde hoy · rojo cerrado hasta mañana.
+  const dotClass = !status
+    ? tone === "ink"
+      ? "bg-sillar-300"
+      : "bg-sillar-50/45"
+    : status.state === "open"
+      ? "bg-campina-500"
+      : status.state === "later"
+        ? "bg-ocre-300"
+        : "bg-alerta";
+
+  if (tone === "plain") {
+    // Versión desnuda para la portada (como "Abierto hasta las 20:00 h" del Guggenheim).
+    return (
+      <p className={clsx("inline-flex min-h-11 items-center gap-3 text-sillar-50 text-shade", className)}>
+        <span aria-hidden="true" className="relative inline-flex size-2.5 shrink-0">
+          {dotOpen && <span className="status-halo absolute inset-0 rounded-full bg-campina-500" />}
+          <span className={clsx("relative size-2.5 rounded-full", dotClass)} />
+        </span>
+        <span className="text-[0.95rem] leading-snug md:text-[1.02rem]">{label}</span>
+      </p>
+    );
+  }
 
   return (
     <p
@@ -40,7 +64,7 @@ export function OpenStatus({ tone = "light", className }: { tone?: "light" | "da
     >
       <span
         aria-hidden="true"
-        className={clsx("size-2 shrink-0 rounded-full", dotOpen ? "bg-campina-500" : "bg-alerta")}
+        className={clsx("size-2 shrink-0 rounded-full", dotClass)}
       />
       <span className="t-label t-label-inherit">{label}</span>
     </p>

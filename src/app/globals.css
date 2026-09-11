@@ -47,7 +47,7 @@
 @layer components {
 
   /* ---------- Base ---------- */
-  html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+  html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; scrollbar-gutter: stable; }
   body {
     background: var(--paper);
     color: var(--ink);
@@ -308,3 +308,127 @@
   .group:hover .arrow-slide-x, .group:focus-visible .arrow-slide-x { transform: translateX(6px); }
 
 }
+
+/* ==================================================================
+   Portada: nombre estilo Guggenheim, velo, Ken Burns y splash.
+   Fuera de @layer a propósito: los selectores `html.splash-play …` deben
+   ganar siempre. Tiempos alineados con src/lib/splash.ts.
+   ================================================================== */
+
+/* Sin máximo solo en la primera pantalla y su header: el nombre va de borde a
+   borde como en la referencia; el gutter ya limita los márgenes. */
+.container-hero { width: 100%; padding-inline: var(--gutter); }
+
+/* Velo denso solo bajo el header y el nombre (contraste ≥ 3:1 medido sobre el
+   cielo), transparente sobre la fachada y apenas un toque abajo para el estado. */
+.hero-veil {
+  background: linear-gradient(180deg,
+    rgba(18, 19, 17, 0.58) 0,
+    rgba(18, 19, 17, 0.5) clamp(170px, 28svh, 290px),
+    rgba(18, 19, 17, 0) clamp(290px, 47svh, 470px),
+    rgba(18, 19, 17, 0) 75%,
+    rgba(18, 19, 17, 0.18) 100%);
+}
+/* La foto de portada es plana y fría: un grado leve la acerca a la luz de Arequipa. */
+.hero-photo { filter: saturate(1.12) contrast(1.06); }
+
+/* Nombre a todo el ancho: la caja mide el ancho disponible (cqw) y el tamaño se
+   deriva del ancho del texto en em, medido en el navegador. */
+.hero-name-wrap { container-type: inline-size; }
+.hero-name {
+  --name-em: 12.98;        /* ancho medido de "MOLINO DE SABANDÍA" en una línea: 12,89 em */
+  --name-em-mobile: 8.08;  /* ancho medido de "DE SABANDÍA" (línea más larga en móvil): 8,01 em */
+  font-family: var(--font-sans);
+  font-stretch: 110%;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  font-size: calc(100cqw / var(--name-em-mobile));
+  white-space: nowrap;
+  text-shadow: 0 0 1px rgba(18, 19, 17, 0.35), 0 2px 14px rgba(18, 19, 17, 0.45);
+}
+.hero-name__strong { display: block; font-weight: 700; }
+.hero-name__light { font-weight: 300; letter-spacing: 0.045em; }
+@media (min-width: 768px) {
+  .hero-name { font-size: calc(100cqw / var(--name-em)); }
+  .hero-name__strong { display: inline; }
+}
+.hero-word { display: inline-block; white-space: nowrap; }
+.hero-letter { display: inline-block; }
+/* Mientras carga Archivo (la de reserva es ~12 % más estrecha) no se pinta el
+   nombre visual; el texto accesible sigue disponible. Máx. 3 s (splash.ts). */
+html.name-wait .hero-name > [aria-hidden="true"] { visibility: hidden; }
+
+/* Ken Burns en CSS: arranca sin esperar a la hidratación. El botón de pausa
+   congela todo el movimiento de la portada (foto y halo del estado). */
+@keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.08); } }
+.kenburns { animation: kenburns 24s ease-in-out infinite alternate; transform-origin: 50% 60%; }
+@keyframes status-halo { 0% { transform: scale(1); opacity: 0.55; } 100% { transform: scale(2.6); opacity: 0; } }
+.status-halo { animation: status-halo 2.4s ease-out infinite; }
+[data-paused="true"] .kenburns, [data-paused="true"] .status-halo { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .kenburns, .status-halo { animation: none; }
+}
+
+/* Foco visible sobre la foto: línea clara entre dos bandas oscuras. */
+:is(header[data-solid="false"], section[aria-label="Portada"]) :focus-visible {
+  outline-color: var(--color-sillar-50);
+  box-shadow: 0 0 0 7px rgba(18, 19, 17, 0.62);
+}
+
+/* ---------- Splash (solo con html.splash-play; ver src/lib/splash.ts) ----------
+   Fases: `splash-hold` = esperando la foto (máx. 2,5 s): solo se ven las hiladas
+   de sillar. Al quitarse, la secuencia arranca desde ese instante:
+     0,8–1,2 s  sale el contenido del splash · 1,1–1,7 s sale el fondo
+     1,3–3,2 s  la foto emerge poco a poco
+     2,5–4,2 s  el nombre entra letra a letra
+     3,4–4,3 s  header, estado y pausa (ocultos e inalcanzables hasta entonces) */
+.splash { display: none; }
+html.splash-lock, html.splash-lock body { overflow: hidden; }
+
+@keyframes splash-out { to { opacity: 0; } }
+@keyframes splash-gone { to { visibility: hidden; } }
+@keyframes splash-content-out { to { opacity: 0; } }
+@keyframes splash-block-in { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hero-media-in { from { opacity: 0; transform: scale(1.12); } to { opacity: 1; transform: none; } }
+@keyframes name-in { from { opacity: 0; transform: translateY(0.35em); } to { opacity: 1; transform: none; } }
+@keyframes ui-in { from { opacity: 0; visibility: hidden; } to { opacity: 1; visibility: visible; } }
+
+html.splash-play .splash {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-volcan-950);
+  pointer-events: none;
+}
+.splash__block { fill: var(--color-sillar-200); }
+html.splash-play .splash__block {
+  animation: splash-block-in 0.5s var(--ease-house) both;
+  animation-delay: calc(0.12s + var(--b, 0) * 0.1s);
+}
+html.splash-play .splash__label { animation: fade-in 0.6s ease 0.35s both; }
+
+/* En espera: todo en su estado inicial. */
+html.splash-hold .hero-media, html.splash-hold .hero-letter { opacity: 0; }
+html.splash-hold [data-intro="ui"] { opacity: 0; visibility: hidden; }
+
+/* Secuencia (cuenta desde que se retira splash-hold). */
+html.splash-play:not(.splash-hold) .splash {
+  animation: splash-out 0.6s var(--ease-house) 1.1s both, splash-gone 1.75s step-end forwards;
+}
+html.splash-play:not(.splash-hold) .splash > * { animation: splash-content-out 0.4s ease-in 0.8s both; }
+/* La fotografía aparece poco a poco… */
+html.splash-play:not(.splash-hold) .hero-media { animation: hero-media-in 1.9s cubic-bezier(0.33, 0, 0.2, 1) 1.3s both; }
+/* …luego el nombre, letra a letra… */
+html.splash-play:not(.splash-hold) .hero-letter {
+  animation: name-in 1s var(--ease-house) both;
+  animation-delay: calc(2.5s + var(--i, 0) * 0.045s);
+}
+/* …y al final la interfaz. */
+html.splash-play:not(.splash-hold) [data-intro="ui"] { animation: ui-in 0.9s var(--ease-house) 3.4s both; }
+/* Si la foto llega tarde (tras los 2,5 s de espera), entra con un fundido propio. */
+html.photo-late .hero-photo { animation: fade-in 1.4s ease both; }

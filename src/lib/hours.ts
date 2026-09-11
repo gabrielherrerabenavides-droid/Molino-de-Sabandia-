@@ -17,8 +17,10 @@ export function getOpenStatus(now: Date = new Date()) {
   const isOpen = opensToday && minutes >= openMin && minutes < closeMin;
   const closeLabel = `${String(ch).padStart(2, "0")}:${String(cm).padStart(2, "0")}`;
   const openLabel = `${String(oh).padStart(2, "0")}:${String(om).padStart(2, "0")}`;
+  const state: "open" | "later" | "closed" = isOpen ? "open" : minutes < openMin && opensToday ? "later" : "closed";
   return {
     isOpen,
+    state,
     label: isOpen ? `Abierto hoy hasta las ${closeLabel} h` : minutes < openMin && opensToday ? `Abre hoy a las ${openLabel} h` : `Cerrado · abre mañana a las ${openLabel} h`,
     openLabel,
     closeLabel,

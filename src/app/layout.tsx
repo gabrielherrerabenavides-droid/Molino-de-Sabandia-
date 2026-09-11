@@ -5,6 +5,7 @@ import { SITE } from "@/content/site";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Providers } from "@/components/layout/Providers";
+import { SPLASH_SCRIPT } from "@/lib/splash";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -57,9 +58,11 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  // suppressHydrationWarning: SPLASH_SCRIPT añade clases a <html> antes de hidratar.
   return (
-    <html lang="es-PE" className={`${archivo.variable} ${playfair.variable} h-full antialiased`}>
+    <html lang="es-PE" suppressHydrationWarning className={`${archivo.variable} ${playfair.variable} h-full antialiased`}>
       <body className="grain min-h-full flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: SPLASH_SCRIPT }} />
         <Providers>
           <SiteHeader />
           <main id="contenido" className="flex-1">{children}</main>
