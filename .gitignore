@@ -47,3 +47,7 @@ playwright-report/
 
 # capturas de revisión visual
 shots/
+
+# vercel link (token OIDC local)
+.env*.local
+!.env.example

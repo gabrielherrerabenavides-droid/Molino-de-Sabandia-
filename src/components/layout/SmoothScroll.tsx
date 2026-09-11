@@ -84,14 +84,62 @@ export function SmoothScroll() {
     lenis.start();
   }, [open]);
 
-  // Una navegación interna cancela la introducción antes del pintado: la ruta
-  // nueva no hereda el bloqueo y volver a "/" no repite el splash.
+  // Navegación interna:
+  //  - cancela la introducción de la portada (la ruta nueva no hereda el bloqueo);
+  //  - en una navegación NUEVA deja la página arriba del todo antes del pintado.
+  //    Sin esto, si la inercia de Lenis seguía activa, deshacía el scroll a 0 de
+  //    Next y la página nueva aparecía a media altura (p. ej. al pulsar "Reservar");
+  //  - en atrás/adelante no fuerza nada: solo corta la inercia para no pelear con
+  //    la restauración de la posición.
   const pathname = usePathname();
-  const initialPath = useRef(pathname);
+  const lastPath = useRef(pathname);
+  const lastPop = useRef(-Infinity);
+
+  useEffect(() => {
+    const onPop = () => {
+      lastPop.current = performance.now();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   useLayoutEffect(() => {
-    if (pathname === initialPath.current) return;
+    if (pathname === lastPath.current) return;
+    lastPath.current = pathname;
     document.documentElement.classList.remove(...SPLASH_CLASSES);
+
+    const lenis = getLenis();
+    const isHistoryNav = performance.now() - lastPop.current < 1500;
+    if (isHistoryNav || window.location.hash) {
+      if (lenis && !lenis.isStopped) {
+        lenis.stop();
+        lenis.start();
+      }
+      return;
+    }
+    window.scrollTo(0, 0);
+    lenis?.scrollTo(0, { immediate: true, force: true });
   }, [pathname]);
+
+  // Enlace a la página en la que ya estás (p. ej. "Reservar" dentro de /reservas):
+  // Next no desplaza, así que subimos nosotros. No se usa `defaultPrevented`
+  // porque <Link> siempre lo marca.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = (event.target as Element | null)?.closest?.("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      if ((anchor.target && anchor.target !== "_self") || anchor.hasAttribute("download")) return;
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin !== window.location.origin || url.pathname !== window.location.pathname || url.hash) return;
+      const lenis = getLenis();
+      const menuOpen = document.documentElement.classList.contains("no-scroll");
+      if (lenis && !lenis.isStopped) lenis.scrollTo(0, { duration: 1.1 });
+      else window.scrollTo({ top: 0, behavior: menuOpen ? "auto" : "smooth" });
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
 
   return null;
 }
