@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Ticket } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { SITE } from "@/content/site";
 import { useMenu } from "@/components/layout/menu-context";
@@ -107,7 +107,21 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <div className="flex items-center justify-self-end">
+        <div className="flex items-center gap-1 justify-self-end sm:gap-2">
+          <Link
+            href="/visita"
+            aria-label="Ver horarios y tarifas"
+            title="Horarios y tarifas"
+            className={clsx(
+              "inline-flex size-11 shrink-0 items-center justify-center transition-[background-color,border-color,color] duration-300",
+              light
+                ? "hover:text-ocre-300"
+                : "border border-sillar-300 hover:border-ocre-500 hover:bg-sillar-100 hover:text-ocre-500",
+            )}
+          >
+            <Ticket size={21} strokeWidth={1.5} aria-hidden="true" />
+          </Link>
+
           {light ? (
             <Link
               href="/reservas"
