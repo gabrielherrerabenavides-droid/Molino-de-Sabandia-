@@ -4,6 +4,7 @@ import { MotionConfig } from "motion/react";
 import { MenuProvider, useMenu } from "@/components/layout/menu-context";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { MenuOverlay } from "@/components/layout/MenuOverlay";
+import { AccessibilityTools } from "@/components/layout/AccessibilityTools";
 
 export { useMenu };
 
@@ -23,6 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </a>
         <SmoothScroll />
         {children}
+        <AccessibilityTools />
         <MenuOverlay />
       </MenuProvider>
     </MotionConfig>

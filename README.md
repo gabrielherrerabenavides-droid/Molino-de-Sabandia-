@@ -289,8 +289,8 @@ uno con la administración.
 | **WhatsApp** | `SITE.contact.whatsapp` | vacío. Formato internacional sin `+` (ej. `51987654321`) |
 | **Correo** | `SITE.contact.email` | `elmolinodesabandia@gmail.com`, tomado de la página de Facebook |
 | **Instagram / TikTok** | `SITE.contact.instagram`, `.tiktok` | vacíos: no se pintan los enlaces |
-| **Hora de cierre** | `SITE.hours.close` | `17:00`; algunas fuentes indican 18:00 |
-| **Tarifas de entrada** | `SITE.admission` | S/ 10 general, S/ 5 estudiantes y niños |
+| **Hora de cierre** | `SITE.hours.close` | `18:00` |
+| **Tarifas de entrada** | `SITE.admission` | Adultos S/ 10; niños de 6 a 11 y adultos mayores S/ 5; de 0 a 5 gratis |
 | **Coordenadas exactas** | `SITE.geo` | `-16.4548, -71.4909`, aproximadas |
 | **Dominio definitivo** | `SITE.url` / `NEXT_PUBLIC_SITE_URL` | `https://molinodesabandia.com` |
 | **Señal o anticipo de eventos** | `src/content/legal/terminos.ts` | «condiciones pendientes de publicación»; el sitio no cobra nada |
@@ -337,17 +337,20 @@ Todo sale de `SITE.hours` y `SITE.admission` en `src/content/site.ts`:
 hours: {
   timezone: "America/Lima",
   days: [0, 1, 2, 3, 4, 5, 6],  // 0 = domingo … 6 = sábado
-  open: "09:00",
-  close: "17:00",
+  open: "08:00",
+  close: "18:00",
   note: "Abierto todos los días del año.",
 },
 admission: [
-  { label: "Adultos", price: 10, detail: "Entrada general" },
+  { label: "Adultos", price: 10, detail: "De 12 a 59 años" },
+  { label: "Niños", price: 5, detail: "De 6 a 11 años" },
+  { label: "Primera infancia", price: 0, detail: "De 0 a 5 años" },
+  { label: "Adultos mayores", price: 5, detail: "Desde los 60 años" },
   // price: null → se muestra "Consultar" en lugar de un importe
 ],
 ```
 
-Con eso se actualizan a la vez la píldora «Abre hoy a las 09:00 h» (que compara
+Con eso se actualizan a la vez la píldora «Abre hoy a las 08:00 h» (que compara
 con la hora real de Lima, `src/lib/hours.ts`), la sección de horarios de
 `/visita`, el footer, el menú y los datos estructurados de Schema.org. **No hay
 que tocar ningún componente.** Si cambian los días de apertura, quita los que no

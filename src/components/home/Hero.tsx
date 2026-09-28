@@ -2,7 +2,7 @@
 
 import { Fragment, useState } from "react";
 import Image from "next/image";
-import { Pause, Play } from "lucide-react";
+import { ArrowDown, Pause, Play } from "lucide-react";
 import { PHOTOS } from "@/content/site";
 import { OpenStatus } from "@/components/ui/OpenStatus";
 
@@ -61,7 +61,7 @@ function Splash() {
 
 /**
  * Portada al estilo del Guggenheim Bilbao: solo fotografía a sangre, el nombre
- * enorme arriba, el estado de apertura abajo a la izquierda y el control de
+ * enorme en dos líneas, el estado de apertura abajo a la izquierda y el control de
  * movimiento abajo a la derecha. Todo lo demás vive debajo del pliegue.
  *
  * Secuencia de entrada (solo con `html.splash-play`, todo en CSS; los tiempos
@@ -106,7 +106,7 @@ export function Hero() {
               <span aria-hidden="true">
                 <span className="hero-name__strong">
                   <Letters text="Molino" start={0} />
-                </span>{" "}
+                </span>
                 <span className="hero-name__light">
                   <Letters text="de Sabandía" start={6} />
                 </span>
@@ -114,20 +114,37 @@ export function Hero() {
             </h1>
           </div>
 
-          <div data-intro="ui" className="mt-auto flex items-end justify-between gap-4">
+          <div
+            data-intro="ui"
+            className="mt-auto flex flex-col gap-3 min-[520px]:flex-row min-[520px]:items-end min-[520px]:justify-between"
+          >
             <OpenStatus tone="plain" />
-            <button
-              type="button"
-              onClick={() => setPaused((v) => !v)}
-              className="inline-flex size-12 shrink-0 items-center justify-center rounded-full border border-sillar-50/75 text-sillar-50 transition-colors duration-300 hover:bg-sillar-50 hover:text-volcan-950 md:size-14"
-            >
-              <span className="sr-only">{paused ? "Reanudar movimiento" : "Pausar movimiento"}</span>
-              {paused ? (
-                <Play size={18} strokeWidth={1.4} aria-hidden="true" />
-              ) : (
-                <Pause size={18} strokeWidth={1.4} aria-hidden="true" />
-              )}
-            </button>
+            <div className="flex items-center justify-end gap-2.5 sm:gap-3">
+              <button
+                type="button"
+                onClick={() => setPaused((v) => !v)}
+                className="inline-flex size-[36px] shrink-0 items-center justify-center rounded-full border border-sillar-50/75 text-sillar-50 transition-colors duration-300 hover:bg-sillar-50 hover:text-volcan-950 md:size-[40px]"
+              >
+                <span className="sr-only">{paused ? "Reanudar movimiento" : "Pausar movimiento"}</span>
+                {paused ? (
+                  <Play size={14} strokeWidth={1.4} aria-hidden="true" />
+                ) : (
+                  <Pause size={14} strokeWidth={1.4} aria-hidden="true" />
+                )}
+              </button>
+              <a
+                href="#destacados"
+                className="group inline-flex min-h-11 items-center gap-6 bg-ocre-300 px-5 text-[0.78rem] font-semibold tracking-[0.08em] text-volcan-950 uppercase transition-colors duration-300 hover:bg-sillar-50 sm:min-h-12 sm:px-6 sm:text-[0.82rem]"
+              >
+                Ingresar al molino
+                <ArrowDown
+                  size={17}
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:translate-y-1"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </section>

@@ -336,23 +336,18 @@
    deriva del ancho del texto en em, medido en el navegador. */
 .hero-name-wrap { container-type: inline-size; }
 .hero-name {
-  --name-em: 12.98;        /* ancho medido de "MOLINO DE SABANDÍA" en una línea: 12,89 em */
-  --name-em-mobile: 8.08;  /* ancho medido de "DE SABANDÍA" (línea más larga en móvil): 8,01 em */
+  --name-em: 9.8;          /* un poco más grande, conservando el bloque alineado a la izquierda */
   font-family: var(--font-sans);
-  font-stretch: 110%;
+  font-stretch: 100%;
   text-transform: uppercase;
-  line-height: 0.9;
-  letter-spacing: 0.01em;
-  font-size: calc(100cqw / var(--name-em-mobile));
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  font-size: calc(100cqw / var(--name-em));
   white-space: nowrap;
   text-shadow: 0 0 1px rgba(18, 19, 17, 0.35), 0 2px 14px rgba(18, 19, 17, 0.45);
 }
 .hero-name__strong { display: block; font-weight: 700; }
-.hero-name__light { font-weight: 300; letter-spacing: 0.045em; }
-@media (min-width: 768px) {
-  .hero-name { font-size: calc(100cqw / var(--name-em)); }
-  .hero-name__strong { display: inline; }
-}
+.hero-name__light { display: block; font-weight: 300; letter-spacing: -0.005em; }
 .hero-word { display: inline-block; white-space: nowrap; }
 .hero-letter { display: inline-block; }
 /* Mientras carga Archivo (la de reserva es ~12 % más estrecha) no se pinta el
@@ -411,6 +406,140 @@ html.splash-play .splash__block {
   animation-delay: calc(0.12s + var(--b, 0) * 0.1s);
 }
 html.splash-play .splash__label { animation: fade-in 0.6s ease 0.35s both; }
+
+/* ==================================================================
+   Herramientas de accesibilidad
+   ================================================================== */
+.a11y-trigger {
+  position: fixed;
+  right: clamp(12px, 2vw, 24px);
+  bottom: clamp(76px, 10vh, 104px);
+  z-index: 70;
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(247, 245, 239, 0.34);
+  border-radius: 999px;
+  background: var(--color-agua-700);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(18, 19, 17, 0.24);
+  transition: transform 0.25s var(--ease-house), background-color 0.25s var(--ease-house);
+}
+.a11y-trigger:hover { transform: translateY(-2px); background: var(--color-agua-500); }
+.a11y-panel {
+  position: fixed;
+  right: clamp(12px, 2vw, 24px);
+  bottom: clamp(136px, calc(10vh + 60px), 164px);
+  z-index: 75;
+  width: min(340px, calc(100vw - 24px));
+  max-height: calc(100svh - 180px);
+  overflow-y: auto;
+  border: 1px solid var(--color-sillar-300);
+  background: var(--color-sillar-50);
+  color: var(--color-volcan-900);
+  box-shadow: 0 24px 70px rgba(18, 19, 17, 0.25);
+}
+.a11y-row {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 0.92rem;
+  transition: background-color 0.2s ease;
+}
+button.a11y-row:hover { background: var(--color-sillar-100); }
+.a11y-icon-button {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-sillar-300);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.a11y-icon-button:hover:not(:disabled) { background: var(--color-volcan-950); color: var(--color-sillar-50); }
+.a11y-icon-button:disabled { cursor: not-allowed; opacity: 0.35; }
+.a11y-switch {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--color-sillar-300);
+  transition: background-color 0.2s ease;
+}
+.a11y-switch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(18, 19, 17, 0.25);
+  transition: transform 0.2s ease;
+}
+[aria-pressed="true"] .a11y-switch { background: var(--color-agua-700); }
+[aria-pressed="true"] .a11y-switch span { transform: translateX(16px); }
+
+html[data-a11y-text="112"] { font-size: 112%; }
+html[data-a11y-text="125"] { font-size: 125%; }
+html[data-a11y-text="150"] { font-size: 150%; }
+/* Los controles gráficos mantienen su geometría; solo el contenido textual
+   debe crecer. El panel gana ancho para evitar saltos y recortes innecesarios. */
+html[data-a11y-text="125"] .a11y-panel { width: min(390px, calc(100vw - 24px)); }
+html[data-a11y-text="150"] .a11y-panel { width: min(440px, calc(100vw - 24px)); }
+html.a11y-readable-font {
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-serif: Arial, Helvetica, sans-serif;
+}
+html.a11y-underline-links a:not(.btn):not([aria-label$="inicio"]) {
+  text-decoration: underline !important;
+  text-decoration-thickness: 0.08em !important;
+  text-underline-offset: 0.18em !important;
+}
+html.a11y-high-contrast {
+  --color-sillar-50: #fff;
+  --color-sillar-100: #f2f2f2;
+  --color-sillar-200: #d7d7d7;
+  --color-sillar-300: #8a8a8a;
+  --color-volcan-950: #000;
+  --color-volcan-900: #050505;
+  --color-volcan-800: #111;
+  --color-volcan-700: #1a1a1a;
+  --color-muted: #333;
+  --color-ocre-500: #694700;
+  --color-ocre-300: #ffd469;
+  --color-agua-500: #005f76;
+  --color-agua-700: #003d4d;
+}
+html.a11y-high-contrast .hero-photo { filter: grayscale(1) contrast(1.25) brightness(0.58); }
+html.a11y-high-contrast .hero-veil { background: rgba(0, 0, 0, 0.36); }
+html.a11y-reduce-motion,
+html.a11y-reduce-motion * { scroll-behavior: auto !important; }
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+@media (max-width: 519px) {
+  .a11y-trigger { right: 12px; bottom: 74px; }
+  .a11y-panel {
+    right: 12px;
+    bottom: 134px;
+    width: calc(100vw - 24px);
+    max-height: calc(100svh - 150px);
+  }
+}
 
 /* En espera: todo en su estado inicial. */
 html.splash-hold .hero-media, html.splash-hold .hero-letter { opacity: 0; }

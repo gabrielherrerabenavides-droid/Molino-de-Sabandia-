@@ -71,7 +71,7 @@ export function Destacados() {
               type="button"
               onClick={() => go(-1)}
               aria-label="Destacado anterior"
-              className="inline-flex size-11 items-center justify-center border border-sillar-300 transition-colors duration-300 hover:border-volcan-950 hover:bg-volcan-950 hover:text-sillar-50"
+              className="inline-flex size-[44px] shrink-0 items-center justify-center border border-sillar-300 transition-colors duration-300 hover:border-volcan-950 hover:bg-volcan-950 hover:text-sillar-50"
             >
               <ArrowLeft size={17} strokeWidth={1.4} aria-hidden="true" />
             </button>
@@ -79,7 +79,7 @@ export function Destacados() {
               type="button"
               onClick={() => go(1)}
               aria-label="Destacado siguiente"
-              className="inline-flex size-11 items-center justify-center border border-sillar-300 transition-colors duration-300 hover:border-volcan-950 hover:bg-volcan-950 hover:text-sillar-50"
+              className="inline-flex size-[44px] shrink-0 items-center justify-center border border-sillar-300 transition-colors duration-300 hover:border-volcan-950 hover:bg-volcan-950 hover:text-sillar-50"
             >
               <ArrowRight size={17} strokeWidth={1.4} aria-hidden="true" />
             </button>

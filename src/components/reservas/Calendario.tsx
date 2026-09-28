@@ -99,9 +99,9 @@ export function Calendario({ mes, onMes, data, cargando, error, slotsPermitidos,
           onClick={() => onMes(desplazarMes(mes, -1))}
           disabled={!puedeAtras}
           aria-label="Mes anterior"
-          className="grid size-11 place-items-center border border-sillar-300 text-volcan-900 transition-colors duration-300 hover:border-volcan-950 disabled:opacity-35 disabled:hover:border-sillar-300"
+          className="grid size-[44px] shrink-0 place-items-center border border-sillar-300 text-volcan-900 transition-colors duration-300 hover:border-volcan-950 disabled:opacity-35 disabled:hover:border-sillar-300"
         >
-          <ChevronLeft aria-hidden className="size-4" />
+          <ChevronLeft aria-hidden className="size-[16px]" />
         </button>
         <p aria-live="polite" className="t-h3 text-center">
           {mesLargo(mes)}
@@ -111,9 +111,9 @@ export function Calendario({ mes, onMes, data, cargando, error, slotsPermitidos,
           onClick={() => onMes(desplazarMes(mes, 1))}
           disabled={!puedeAdelante}
           aria-label="Mes siguiente"
-          className="grid size-11 place-items-center border border-sillar-300 text-volcan-900 transition-colors duration-300 hover:border-volcan-950 disabled:opacity-35 disabled:hover:border-sillar-300"
+          className="grid size-[44px] shrink-0 place-items-center border border-sillar-300 text-volcan-900 transition-colors duration-300 hover:border-volcan-950 disabled:opacity-35 disabled:hover:border-sillar-300"
         >
-          <ChevronRight aria-hidden className="size-4" />
+          <ChevronRight aria-hidden className="size-[16px]" />
         </button>
       </div>
 

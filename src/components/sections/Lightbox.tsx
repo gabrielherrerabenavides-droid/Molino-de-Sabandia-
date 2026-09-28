@@ -121,7 +121,7 @@ export function Lightbox({
               type="button"
               onClick={onClose}
               aria-label="Cerrar galería"
-              className="grid h-11 w-11 place-items-center text-sillar-50 transition-colors hover:text-ocre-300"
+              className="grid size-[44px] shrink-0 place-items-center text-sillar-50 transition-colors hover:text-ocre-300"
             >
               <X size={26} aria-hidden />
             </button>
@@ -132,7 +132,7 @@ export function Lightbox({
               type="button"
               onClick={() => goTo(index - 1)}
               aria-label="Foto anterior"
-              className="absolute left-1 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center text-sillar-50 transition-colors hover:text-ocre-300 md:left-4"
+              className="absolute left-1 top-1/2 z-10 grid size-[44px] -translate-y-1/2 place-items-center text-sillar-50 transition-colors hover:text-ocre-300 md:left-4"
             >
               <ChevronLeft size={32} aria-hidden />
             </button>
@@ -150,7 +150,7 @@ export function Lightbox({
               type="button"
               onClick={() => goTo(index + 1)}
               aria-label="Foto siguiente"
-              className="absolute right-1 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center text-sillar-50 transition-colors hover:text-ocre-300 md:right-4"
+              className="absolute right-1 top-1/2 z-10 grid size-[44px] -translate-y-1/2 place-items-center text-sillar-50 transition-colors hover:text-ocre-300 md:right-4"
             >
               <ChevronRight size={32} aria-hidden />
             </button>

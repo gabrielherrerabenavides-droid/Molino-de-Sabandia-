@@ -41,7 +41,7 @@ export function Panoramica() {
               type="button"
               onClick={() => scrollByViewport(-1)}
               aria-label="Desplazar la panorámica a la izquierda"
-              className="inline-flex size-11 items-center justify-center border border-sillar-50/35 transition-colors duration-300 hover:bg-sillar-50 hover:text-volcan-950"
+              className="inline-flex size-[44px] shrink-0 items-center justify-center border border-sillar-50/35 transition-colors duration-300 hover:bg-sillar-50 hover:text-volcan-950"
             >
               <ArrowLeft size={17} strokeWidth={1.4} aria-hidden="true" />
             </button>
@@ -49,7 +49,7 @@ export function Panoramica() {
               type="button"
               onClick={() => scrollByViewport(1)}
               aria-label="Desplazar la panorámica a la derecha"
-              className="inline-flex size-11 items-center justify-center border border-sillar-50/35 transition-colors duration-300 hover:bg-sillar-50 hover:text-volcan-950"
+              className="inline-flex size-[44px] shrink-0 items-center justify-center border border-sillar-50/35 transition-colors duration-300 hover:bg-sillar-50 hover:text-volcan-950"
             >
               <ArrowRight size={17} strokeWidth={1.4} aria-hidden="true" />
             </button>

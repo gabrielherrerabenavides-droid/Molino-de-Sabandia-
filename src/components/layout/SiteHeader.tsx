@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -15,8 +16,8 @@ const DARK_HERO_ROUTES = new Set(["/"]);
 
 /**
  * Header de museo (referencia: Guggenheim Bilbao): hamburguesa a la izquierda,
- * wordmark centrado y "Reservar" a la derecha. Sobre el hero de la portada es
- * transparente y oculta el wordmark (el nombre enorme ya está en pantalla).
+ * logo centrado y "Reservar" a la derecha. En la portada el logo permanece
+ * oculto hasta que aparece la cabecera sólida; entonces entra en negro.
  * `data-intro="ui"` lo hace aparecer al final del splash de la portada.
  */
 export function SiteHeader() {
@@ -37,9 +38,7 @@ export function SiteHeader() {
   // Sólida cuando: no hay hero oscuro, o ya se hizo scroll. Nunca con el menú abierto.
   const solid = !open && (!overDarkHero || scrolled);
   const light = !solid;
-  // Sobre el hero (sin menú) el nombre gigante hace de marca: el wordmark se esconde.
-  const hideWordmark = overDarkHero && !scrolled && !open;
-
+  const showLogo = !overDarkHero || scrolled;
   const lineTransition = { duration: reduced ? 0.001 : 0.32, ease: EASE };
 
   return (
@@ -57,7 +56,7 @@ export function SiteHeader() {
       <div
         className={clsx(
           overDarkHero ? "container-hero" : "container-site",
-          "grid h-full grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3",
+          "grid h-full grid-cols-[1fr_auto_1fr] items-center gap-[8px] sm:gap-[12px]",
         )}
       >
         <button
@@ -66,9 +65,9 @@ export function SiteHeader() {
           aria-expanded={open}
           aria-controls="menu-principal"
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          className="-ml-2 inline-flex size-11 items-center justify-center justify-self-start transition-colors duration-300 hover:text-ocre-500"
+          className="-ml-[8px] inline-flex size-[44px] items-center justify-center justify-self-start transition-colors duration-300 hover:text-ocre-500"
         >
-          <span className="relative block h-[13px] w-8" aria-hidden="true">
+          <span className="relative block h-[13px] w-[32px]" aria-hidden="true">
             <motion.span
               className="absolute left-0 block h-[1.5px] w-full bg-current"
               animate={open ? { top: 6, rotate: 45 } : { top: 0, rotate: 0 }}
@@ -76,7 +75,7 @@ export function SiteHeader() {
               style={{ top: 0 }}
             />
             <motion.span
-              className="absolute top-1.5 left-0 block h-[1.5px] w-full bg-current"
+              className="absolute top-[6px] left-0 block h-[1.5px] w-full bg-current"
               animate={open ? { opacity: 0, scaleX: 0.4 } : { opacity: 1, scaleX: 1 }}
               transition={lineTransition}
             />
@@ -92,28 +91,32 @@ export function SiteHeader() {
         <Link
           href="/"
           aria-label={`${SITE.name} — inicio`}
-          aria-hidden={hideWordmark ? true : undefined}
-          tabIndex={hideWordmark ? -1 : undefined}
           className={clsx(
-            "inline-flex min-h-11 items-center justify-center py-2 text-center transition-[opacity,color] duration-500 hover:text-ocre-500",
-            hideWordmark && "pointer-events-none opacity-0",
+            "inline-flex min-h-[44px] items-center justify-center py-1 transition-[opacity,visibility] duration-500 hover:opacity-75",
+            showLogo ? "visible opacity-100" : "invisible opacity-0",
           )}
         >
-          <span className="t-wordmark hidden sm:block">Molino de Sabandía</span>
-          <span className="t-wordmark t-wordmark-sm block sm:hidden">
-            Molino
-            <br />
-            de Sabandía
-          </span>
+          <Image
+            src="/logo-molino-blanco.png"
+            alt=""
+            width={984}
+            height={305}
+            priority
+            sizes="(max-width: 399px) 100px, (max-width: 767px) 118px, (max-width: 1023px) 180px, 220px"
+            className={clsx(
+              "h-auto w-[100px] transition-[filter] duration-500 min-[400px]:w-[118px] sm:w-[180px] lg:w-[220px]",
+              solid && "invert",
+            )}
+          />
         </Link>
 
-        <div className="flex items-center gap-1 justify-self-end sm:gap-2">
+        <div className="flex items-center gap-[4px] justify-self-end sm:gap-[8px]">
           <Link
             href="/visita"
             aria-label="Ver horarios y tarifas"
             title="Horarios y tarifas"
             className={clsx(
-              "inline-flex size-11 shrink-0 items-center justify-center transition-[background-color,border-color,color] duration-300",
+              "inline-flex size-[44px] shrink-0 items-center justify-center transition-[background-color,border-color,color] duration-300",
               light
                 ? "hover:text-ocre-300"
                 : "border border-sillar-300 hover:border-ocre-500 hover:bg-sillar-100 hover:text-ocre-500",
@@ -125,7 +128,7 @@ export function SiteHeader() {
           {light ? (
             <Link
               href="/reservas"
-              className="-mr-1 inline-flex min-h-11 items-center gap-2.5 px-1 text-[0.8rem] font-medium tracking-[0.08em] min-[400px]:tracking-[0.14em] uppercase transition-colors duration-300 hover:text-ocre-300 sm:text-[0.86rem]"
+              className="-mr-[4px] inline-flex min-h-[44px] items-center gap-[10px] px-[4px] text-[0.8rem] font-medium tracking-[0.08em] min-[400px]:tracking-[0.14em] uppercase transition-colors duration-300 hover:text-ocre-300 sm:text-[0.86rem]"
             >
               <CalendarDays size={19} strokeWidth={1.4} aria-hidden="true" className="hidden sm:block" />
               Reservar
@@ -137,7 +140,7 @@ export function SiteHeader() {
               </Link>
               <Link
                 href="/reservas"
-                className="link-line -mr-1 inline-flex min-h-11 items-center px-1 text-[0.8rem] font-medium tracking-[0.08em] min-[400px]:tracking-[0.14em] uppercase sm:hidden"
+                className="link-line -mr-[4px] inline-flex min-h-[44px] items-center px-[4px] text-[0.8rem] font-medium tracking-[0.08em] min-[400px]:tracking-[0.14em] uppercase sm:hidden"
               >
                 Reservar
               </Link>

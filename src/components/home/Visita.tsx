@@ -7,7 +7,7 @@ import { OpenStatus } from "@/components/ui/OpenStatus";
 import { MapEmbed } from "@/components/sections/MapEmbed";
 
 function priceLabel(price: number | null) {
-  return price === null ? "Por confirmar" : `${SITE.currency} ${price}`;
+  return price === null ? "Por confirmar" : price === 0 ? "Gratis" : `${SITE.currency} ${price}`;
 }
 
 export function Visita() {

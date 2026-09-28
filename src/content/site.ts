@@ -34,14 +34,15 @@ export const SITE = {
   hours: {
     timezone: "America/Lima",
     days: [0, 1, 2, 3, 4, 5, 6] as number[],
-    open: "09:00",
-    close: "17:00", // TODO confirmar (algunas fuentes indican 18:00)
+    open: "08:00",
+    close: "18:00",
     note: "Abierto todos los días del año.",
   },
   admission: [
-    { label: "Adultos", price: 10 as number | null, detail: "Entrada general" }, // TODO confirmar tarifas vigentes
-    { label: "Estudiantes y adultos mayores", price: 5 as number | null, detail: "Con carné vigente" },
-    { label: "Niños", price: 5 as number | null, detail: "Menores de 12 años" },
+    { label: "Adultos", price: 10 as number | null, detail: "De 12 a 59 años" },
+    { label: "Niños", price: 5 as number | null, detail: "De 6 a 11 años" },
+    { label: "Primera infancia", price: 0 as number | null, detail: "De 0 a 5 años" },
+    { label: "Adultos mayores", price: 5 as number | null, detail: "Desde los 60 años" },
   ],
   currency: "S/",
   distanceKm: 8,

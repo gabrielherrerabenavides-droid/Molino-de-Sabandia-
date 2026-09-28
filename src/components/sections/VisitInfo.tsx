@@ -48,10 +48,12 @@ export function VisitInfo() {
             <Eyebrow tone="ocre">Tarifas</Eyebrow>
             <h2 className="t-h2 mt-3 mb-10 max-w-[16ch]">Entradas</h2>
           </Reveal>
-          <Reveal as="ul" stagger={0.08} className="grid gap-px bg-sillar-300 border border-sillar-300 sm:grid-cols-3">
+          <Reveal as="ul" stagger={0.08} className="grid gap-px border border-sillar-300 bg-sillar-300 sm:grid-cols-2 lg:grid-cols-4">
             {SITE.admission.map((item) => (
               <RevealItem as="li" key={item.label} className="bg-sillar-50 p-6">
-                <p className="t-num text-ocre-500">{item.price !== null ? `${SITE.currency} ${item.price}` : "Por confirmar"}</p>
+                <p className="t-num text-ocre-500">
+                  {item.price === null ? "Por confirmar" : item.price === 0 ? "Gratis" : `${SITE.currency} ${item.price}`}
+                </p>
                 <p className="t-h3 mt-3 mb-1">{item.label}</p>
                 <p className="t-body text-muted">{item.detail}</p>
               </RevealItem>
