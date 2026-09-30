@@ -2,6 +2,8 @@
  * Fuente única de datos del sitio. Los datos marcados con TODO son provisionales
  * y deben confirmarse con la administración del molino antes del lanzamiento.
  */
+import { RESERVATIONS_ENABLED } from "@/lib/features";
+
 export const SITE = {
   name: "Molino de Sabandía",
   legalName: "Molino de Sabandía", // TODO confirmar razón social y RUC
@@ -56,10 +58,15 @@ export const SITE = {
 export const NAV = [
   { href: "/", label: "Inicio" },
   { href: "/historia", label: "Historia" },
-  { href: "/galeria", label: "Galería" },
-  { href: "/eventos", label: "Eventos" },
+  { href: "/explora/arquitectura-rural-mestiza", label: "Arquitectura rural mestiza" },
+  { href: "/explora/tecnologia-hidraulica", label: "Tecnología hidráulica" },
+  { href: "/explora/refugio-natural", label: "Refugio natural" },
+  { href: "/explora/fauna-nativa", label: "Fauna nativa" },
+  { href: "/explora/salon-de-la-fama", label: "Nuestro salón de la fama" },
+  { href: "/explora/food-truck", label: "Food Truck" },
+  { href: "/explora/400-anos-despues", label: "El Molino: 400 años después" },
   { href: "/visita", label: "Tu visita" },
-  { href: "/contacto", label: "Contacto" },
+  { href: "/contacto", label: "Contáctanos" },
 ] as const;
 
 export const LEGAL_NAV = [
@@ -134,10 +141,10 @@ export const PHOTOS: Record<string, Photo> = {
 };
 
 export const TIMELINE = [
-  { year: "1621", title: "Nace el molino", text: "El 27 de agosto de 1621, don García de Vargas Machuca encarga, ante el escribano Pedro Ibáñez de Irruegas, al maestro de arquitectura y cantería Francisco Flores levantar un molino en el asiento de Sabandía. Durante siglos abasteció de harina de trigo y maíz a Arequipa y su casona llegó a recibir a los virreyes." },
-  { year: "1972", title: "Patrimonio Cultural de la Nación", text: "El 28 de diciembre de 1972 el molino es declarado Patrimonio Cultural de la Nación." },
-  { year: "1973", title: "El rescate", text: "Abandonado por la molienda moderna, el Banco Central Hipotecario del Perú encarga su restauración al arquitecto Luis Felipe Calle, que vive en el lugar durante los trabajos y lo reconstruye sin planos, guiado por la memoria de los campesinos. Se reinaugura el 14 de septiembre de 1973." },
-  { year: "Hoy", title: "Sigue girando", text: "Único molino colonial de la región que sigue moliendo con la fuerza del agua. Vecinos de la campiña todavía llegan con sacos de maíz, cebada y trigo." },
+  { year: "1621", title: "Nace el molino", text: "Don García de Vargas Machuca encarga su construcción al maestro cantero Don Francisco Flores." },
+  { year: "Siglos", title: "Harina para la región", text: "Durante generaciones, el molino abastece de harina a la campiña arequipeña." },
+  { year: "1973", title: "El rescate", text: "El arquitecto Luis Felipe Calle restaura el molino después de un periodo de abandono." },
+  { year: "Hoy", title: "Patrimonio vivo", text: "Declarado Monumento Histórico, el molino forma parte del Patrimonio Cultural de la Nación." },
 ] as const;
 
 export const SERVICES = [
@@ -176,6 +183,8 @@ export const FAQ = [
   { q: "¿Cuánto dura la visita?", a: "Entre una y dos horas, según el ritmo. Hay recorrido por el mecanismo hidráulico, los jardines y la campiña." },
   { q: "¿Es accesible?", a: "El conjunto tiene escaleras y desniveles de piedra. Si necesitas una ruta accesible o apoyo particular, consúltanos antes de tu visita." },
   { q: "¿Se puede comer en el molino?", a: "Sí. El restaurante ofrece cocina tradicional arequipeña. Consulta horarios y disponibilidad." },
-  { q: "¿Puedo hacer una sesión de fotos?", a: "Sí. Las sesiones profesionales requieren reserva previa. Usa el formulario de reservas y te confirmamos condiciones y disponibilidad." },
+  { q: "¿Puedo hacer una sesión de fotos?", a: RESERVATIONS_ENABLED
+    ? "Sí. Las sesiones profesionales requieren reserva previa. Usa el formulario de reservas y te confirmamos condiciones y disponibilidad."
+    : "Las sesiones profesionales requieren coordinación previa. Escríbenos desde Contacto para consultar las condiciones y disponibilidad." },
   { q: "¿Cómo llego desde el centro de Arequipa?", a: "Sabandía está a unos 8 km al sureste del Centro Histórico. En taxi son unos 15 minutos; también hay buses hacia Sabandía." },
 ] as const;

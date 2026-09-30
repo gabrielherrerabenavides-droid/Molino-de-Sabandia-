@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/content/site";
+import { RESERVATIONS_ENABLED } from "@/lib/features";
+import { EXPLORE_PATHS } from "@/content/explora";
 
 /**
  * Rutas públicas del sitio. Sin `lastModified`: un `new Date()` en cada build
@@ -13,12 +15,13 @@ const ROUTES = [
   "/visita",
   "/galeria",
   "/eventos",
-  "/reservas",
+  ...(RESERVATIONS_ENABLED ? ["/reservas"] : []),
   "/contacto",
   "/legal/privacidad",
   "/legal/terminos",
   "/legal/cookies",
   "/libro-de-reclamaciones",
+  ...EXPLORE_PATHS.map((slug) => `/explora/${slug}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

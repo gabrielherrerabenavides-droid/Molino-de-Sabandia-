@@ -6,6 +6,20 @@ fuerza del agua. El sitio cuenta la historia del lugar, orienta la visita y
 permite **solicitar una fecha para eventos** (bodas, sesiones fotográficas,
 quinceañeras, eventos corporativos y visitas en grupo).
 
+> Estado de la maqueta (29/09/2026): el sistema de reservas online está en pausa.
+> Su código se conserva. Para habilitarlo, configura
+> `NEXT_PUBLIC_RESERVATIONS_ENABLED=true` y vuelve a desplegar. La página,
+> los endpoints y la administración de reservas permanecen cerrados mientras
+> la variable no sea `true`. Contacto y Libro de Reclamaciones siguen activos.
+> El punto de retorno previo a estos cambios es el tag local
+> `checkpoint/pre-cliente-2026-09-29` (commit `0164c0f`).
+
+Las secciones Arquitectura rural mestiza, Tecnología hidráulica, Refugio natural,
+Fauna nativa, Food Truck y El Molino: 400 años después contienen texto de
+maqueta hasta recibir la información final del cliente. Los dos retratos del
+Salón de la fama son imágenes generadas y etiquetadas como referenciales; faltan
+fotos, nombres y datos reales de los toros.
+
 - **Stack**: Next.js 16 (App Router, `src/`), React 19, TypeScript estricto,
   Tailwind v4, `motion`, `zod`, `date-fns`, Resend, Neon Postgres.
 - **Idioma**: español de Perú. Toda la interfaz y los correos están en español.

@@ -10,6 +10,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { SITE } from "@/content/site";
 import { useMenu } from "@/components/layout/menu-context";
 import { EASE } from "@/components/ui/Reveal";
+import { RESERVATIONS_ENABLED } from "@/lib/features";
 
 /** Rutas que abren con hero oscuro a sangre. Por ahora solo la portada. */
 const DARK_HERO_ROUTES = new Set(["/"]);
@@ -125,7 +126,7 @@ export function SiteHeader() {
             <Ticket size={21} strokeWidth={1.5} aria-hidden="true" />
           </Link>
 
-          {light ? (
+          {RESERVATIONS_ENABLED && (light ? (
             <Link
               href="/reservas"
               className="-mr-[4px] inline-flex min-h-[44px] items-center gap-[10px] px-[4px] text-[0.8rem] font-medium tracking-[0.08em] min-[400px]:tracking-[0.14em] uppercase transition-colors duration-300 hover:text-ocre-300 sm:text-[0.86rem]"
@@ -145,7 +146,7 @@ export function SiteHeader() {
                 Reservar
               </Link>
             </>
-          )}
+          ))}
         </div>
       </div>
     </header>

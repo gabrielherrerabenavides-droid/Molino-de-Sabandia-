@@ -1,114 +1,60 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PageHero } from "@/components/ui/PageHero";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
-import { Timeline } from "@/components/sections/Timeline";
 import { JsonLd, molinoJsonLd, breadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { pageMetadata } from "@/lib/seo";
 import { PHOTOS } from "@/content/site";
-import { CHAPTERS, SOURCES } from "@/content/historia";
 
-const TITLE = "Cuatro siglos. Una historia por descubrir.";
-const DESCRIPTION =
-  "Del contrato de 1621 a la restauración de 1973: la historia del Molino de Sabandía, el único molino colonial de Arequipa que sigue moliendo con la fuerza del agua.";
+const DESCRIPTION = "Desde su construcción en 1621 hasta la restauración de 1973: la historia del Molino de Sabandía, patrimonio de la campiña arequipeña.";
 
-export const metadata = pageMetadata({
-  title: "Historia",
-  description: DESCRIPTION,
-  path: "/historia",
-});
+const HISTORY = [
+  "Construido en 1621, el Molino de Sabandía es uno de los monumentos coloniales más antiguos y emblemáticos de la campiña arequipeña. Su construcción fue ordenada por el hacendado español Don García de Vargas Machuca y ejecutada por el maestro cantero Don Francisco Flores.",
+  "Como dato histórico fascinante, el molino comparte exactamente su año de origen con la construcción de la actual Catedral de Arequipa, levantada tras la destrucción total del templo primitivo.",
+  "Luego de siglos de esplendor abasteciendo de harina a la región, el molino cayó en el abandono. Sin embargo, en 1973, fue rescatado de sus ruinas y restaurado con absoluta fidelidad arquitectónica por el arquitecto Luis Felipe Calle.",
+  "Declarado “Monumento Histórico”, el molino hoy es parte del Patrimonio Cultural de la Nación.",
+] as const;
+
+export const metadata = pageMetadata({ title: "Historia", description: DESCRIPTION, path: "/historia" });
 
 export default function HistoriaPage() {
   return (
     <>
       <JsonLd data={molinoJsonLd(PHOTOS.historica)} />
-      <JsonLd
-        data={breadcrumbJsonLd([
-          { name: "Inicio", url: "/" },
-          { name: "Historia", url: "/historia" },
-        ])}
-      />
+      <JsonLd data={breadcrumbJsonLd([{ name: "Inicio", url: "/" }, { name: "Historia", url: "/historia" }])} />
+      <PageHero eyebrow="Historia · 1621" title="La historia sigue en movimiento." lead={DESCRIPTION} image={PHOTOS.historica} />
 
-      <PageHero eyebrow="Historia" title={TITLE} lead={DESCRIPTION} image={PHOTOS.historica} />
-
-      <div className="section pt-[clamp(56px,8vw,120px)]">
-        <Container>
-          <div className="grid gap-12 lg:grid-cols-[220px_1fr] lg:gap-16">
-            <aside className="hidden lg:block">
-              <nav aria-label="Capítulos" className="sticky top-[calc(var(--header-h)+24px)]">
-                <p className="t-label mb-4">Capítulos</p>
-                <ul className="space-y-3 border-l border-sillar-300 pl-4">
-                  {CHAPTERS.map((chapter) => (
-                    <li key={chapter.id}>
-                      <a href={`#${chapter.id}`} className="t-body text-muted transition-colors hover:text-volcan-900">
-                        {chapter.navLabel}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </aside>
-
-            <div className="space-y-20">
-              {CHAPTERS.map((chapter) => (
-                <section key={chapter.id} id={chapter.id} className="scroll-mt-[calc(var(--header-h)+24px)]">
-                  <Reveal>
-                    <Eyebrow tone="ocre">{chapter.eyebrow}</Eyebrow>
-                    <h2 className="t-h2 mt-3 mb-6 max-w-[22ch]">{chapter.title}</h2>
-                    <div className="max-w-prose-narrow space-y-4">
-                      {chapter.paragraphs.map((paragraph, index) => (
-                        <p key={index} className="t-body text-volcan-700">
-                          {paragraph}
-                        </p>
-                      ))}
-                    </div>
-                  </Reveal>
-
-                  {chapter.photo && (
-                    <Reveal className="mt-10">
-                      <figure className="relative aspect-[16/10] w-full overflow-hidden bg-sillar-200 sm:aspect-[16/7]">
-                        <Image
-                          src={chapter.photo.src}
-                          alt={chapter.photo.alt}
-                          fill
-                          sizes="(min-width: 1024px) 70vw, 100vw"
-                          className="photo-grade object-cover"
-                        />
-                      </figure>
-                      <figcaption className="mt-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                        <span className="t-caption">{chapter.photo.caption}</span>
-                        <span className="t-label">
-                          {chapter.photo.author} · {chapter.photo.year}
-                        </span>
-                      </figcaption>
-                    </Reveal>
-                  )}
-                </section>
-              ))}
-
-              <section className="border-t border-sillar-300 pt-10">
-                <p className="t-label mb-4">Fuentes</p>
-                <ul className="max-w-prose-narrow space-y-2">
-                  {SOURCES.map((source) => (
-                    <li key={`${source.label}-${source.detail}`} className="t-body text-muted">
-                      {source.label} — {source.detail}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </div>
-          </div>
+      <section className="section pt-[clamp(48px,7vw,112px)]">
+        <Container className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+          <Reveal>
+            <Eyebrow tone="ocre">Cuatro siglos de memoria</Eyebrow>
+            <p className="mt-5 text-[clamp(3.6rem,9vw,9rem)] leading-[0.9] font-light tracking-[-0.07em] text-volcan-900">1621</p>
+            <p className="t-caption mt-5 max-w-[19ch]">Un molino hecho de piedra, agua y trabajo.</p>
+          </Reveal>
+          <Reveal className="max-w-[70ch] space-y-6">
+            {HISTORY.map((paragraph, index) => (
+              <p key={paragraph} className={index === 0 ? "t-lead text-volcan-900" : "t-body text-volcan-700"}>{paragraph}</p>
+            ))}
+          </Reveal>
         </Container>
-      </div>
+      </section>
 
       <section className="section sillar-pattern border-t border-sillar-200">
-        <Container>
+        <Container className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
           <Reveal>
-            <Eyebrow tone="ocre">Línea de tiempo</Eyebrow>
-            <h2 className="t-h2 mt-3 mb-10 max-w-[18ch]">Cuatro siglos, cuatro momentos</h2>
+            <Eyebrow tone="ocre">El rescate · 1973</Eyebrow>
+            <h2 className="t-h2 mt-4 max-w-[18ch]">Volver a darle vida a la piedra.</h2>
+            <p className="t-body mt-6 max-w-prose-narrow text-volcan-700">La restauración devolvió al molino su lugar en la memoria de Arequipa. Las fotografías de archivo permiten mirar ese momento de cerca.</p>
+            <Link href="/explora/400-anos-despues" className="btn btn-ghost mt-8">Ver el molino 400 años después</Link>
           </Reveal>
-          <Timeline />
+          <Reveal as="figure">
+            <div className="relative aspect-[4/3] overflow-hidden bg-sillar-200">
+              <Image src={PHOTOS.patio.src} alt={PHOTOS.patio.alt} fill sizes="(min-width: 1024px) 50vw, 100vw" className="photo-grade object-cover" />
+            </div>
+            <figcaption className="mt-4 flex flex-wrap justify-between gap-3"><span className="t-caption">{PHOTOS.patio.caption}</span><span className="t-label">{PHOTOS.patio.author} · {PHOTOS.patio.year}</span></figcaption>
+          </Reveal>
         </Container>
       </section>
     </>

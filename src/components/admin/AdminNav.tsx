@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
+import { RESERVATIONS_ENABLED } from "@/lib/features";
 
 const ENLACES = [
-  { href: "/admin/reservas", label: "Reservas" },
+  ...(RESERVATIONS_ENABLED ? [{ href: "/admin/reservas", label: "Reservas" }] : []),
   { href: "/admin/reclamaciones", label: "Reclamaciones" },
 ] as const;
 

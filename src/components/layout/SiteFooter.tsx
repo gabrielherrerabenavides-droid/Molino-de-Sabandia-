@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LEGAL_NAV, PHOTOS, SITE } from "@/content/site";
 import { BackToTop } from "@/components/layout/BackToTop";
 import { Year } from "@/components/ui/Year";
+import { RESERVATIONS_ENABLED } from "@/lib/features";
 
 type FooterColumn = { title: string; links: readonly { href: string; label: string }[] };
 
@@ -27,7 +28,7 @@ const COLUMNS: readonly FooterColumn[] = [
     title: "Eventos",
     links: [
       { href: "/eventos", label: "Espacios y celebraciones" },
-      { href: "/reservas", label: "Reservar" },
+      ...(RESERVATIONS_ENABLED ? [{ href: "/reservas", label: "Reservar" }] : []),
       { href: "/contacto", label: "Contacto" },
     ],
   },

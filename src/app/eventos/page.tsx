@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Reveal, RevealItem } from "@/components/ui/Reveal";
 import { pageMetadata } from "@/lib/seo";
 import { PHOTOS, EVENT_TYPES, SLOT_LABELS } from "@/content/site";
+import { RESERVATIONS_ENABLED } from "@/lib/features";
 
 const DESCRIPTION =
   "Bodas, quinceañeras, sesiones fotográficas y eventos corporativos en los jardines, el patio de sillar y la campiña del Molino de Sabandía.";
@@ -39,9 +40,13 @@ const ESPACIOS = [
   },
 ] as const;
 
-const PASOS = [
+const PASOS = RESERVATIONS_ENABLED ? [
   { title: "Solicita", text: "Cuéntanos qué celebras, cuándo y cuántos invitados esperas a través del formulario de reservas." },
   { title: "Te confirmamos en 24–48 h", text: "Revisamos disponibilidad y te escribimos con las condiciones para tu fecha." },
+  { title: "Visita y cierra detalles", text: "Conoces el espacio en persona y afinamos los últimos detalles de tu celebración." },
+] : [
+  { title: "Escríbenos", text: "Cuéntanos qué celebras y cuántos invitados esperas desde el formulario de contacto." },
+  { title: "Conversamos", text: "El equipo del molino te orienta sobre espacios y condiciones disponibles." },
   { title: "Visita y cierra detalles", text: "Conoces el espacio en persona y afinamos los últimos detalles de tu celebración." },
 ] as const;
 
@@ -99,8 +104,8 @@ export default function EventosPage() {
                     {event.minGuests}–{event.maxGuests} invitados · {event.slots.map((slot) => SLOT_LABELS[slot]).join(" · ")}
                   </p>
                 </div>
-                <Button href={`/reservas?tipo=${event.slug}`} variant="ghost" className="self-start">
-                  Reservar
+                <Button href={RESERVATIONS_ENABLED ? `/reservas?tipo=${event.slug}` : "/contacto"} variant="ghost" className="self-start">
+                  {RESERVATIONS_ENABLED ? "Reservar" : "Consultar"}
                 </Button>
               </RevealItem>
             ))}
@@ -143,7 +148,9 @@ export default function EventosPage() {
             <Eyebrow tone="ocre">Empecemos</Eyebrow>
             <h2 className="t-h2 mt-3 max-w-[18ch]">Cuéntanos qué quieres celebrar</h2>
           </Reveal>
-          <Button href="/reservas">Solicitar mi reserva</Button>
+          <Button href={RESERVATIONS_ENABLED ? "/reservas" : "/contacto"}>
+            {RESERVATIONS_ENABLED ? "Solicitar mi reserva" : "Ir a contacto"}
+          </Button>
         </Container>
       </section>
     </>

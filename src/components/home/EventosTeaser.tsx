@@ -2,6 +2,7 @@ import Link from "next/link";
 import { EVENT_TYPES } from "@/content/site";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal, RevealItem } from "@/components/ui/Reveal";
+import { RESERVATIONS_ENABLED } from "@/lib/features";
 
 export function EventosTeaser() {
   return (
@@ -22,7 +23,7 @@ export function EventosTeaser() {
           <Reveal delay={0.1} className="max-w-none">
             <p className="t-lead t-lead-light max-w-prose-narrow">
               Bodas, sesiones de fotos, quinceañeras, visitas de colegio o días de integración. Cuéntanos qué quieres
-              celebrar y revisamos la disponibilidad contigo.
+              celebrar y {RESERVATIONS_ENABLED ? "revisamos la disponibilidad contigo." : "conversemos sobre las posibilidades del lugar."}
             </p>
           </Reveal>
         </div>
@@ -42,9 +43,11 @@ export function EventosTeaser() {
         <hr className="stone-rule-dark" />
 
         <Reveal delay={0.1} className="mt-[clamp(28px,4vw,56px)] flex flex-col gap-3 sm:flex-row">
-          <Link href="/reservas" className="btn btn-light">
-            Reservar un evento
-          </Link>
+          {RESERVATIONS_ENABLED ? (
+            <Link href="/reservas" className="btn btn-light">Reservar un evento</Link>
+          ) : (
+            <Link href="/contacto" className="btn btn-light">Consultar por un evento</Link>
+          )}
           <Link href="/eventos" className="btn btn-ghost-light">
             Ver espacios
           </Link>

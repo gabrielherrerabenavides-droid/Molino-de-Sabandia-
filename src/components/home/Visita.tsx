@@ -14,7 +14,7 @@ export function Visita() {
   return (
     <section id="visita" aria-labelledby="visita-title" className="section container-site">
       <div className="grid gap-[clamp(32px,5vw,88px)] lg:grid-cols-2">
-        <div>
+        <div className="min-w-0">
           <Reveal>
             <Eyebrow tone="ocre" className="mb-5">
               Tu visita
@@ -41,8 +41,8 @@ export function Visita() {
                 <h3 className="t-label">Tarifas</h3>
                 <ul className="mt-3 flex flex-col gap-2">
                   {SITE.admission.map((item) => (
-                    <li key={item.label} className="flex items-baseline justify-between gap-4 border-b border-sillar-200 pb-2">
-                      <span className="t-body">{item.label}</span>
+                    <li key={item.label} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-sillar-200 pb-2">
+                      <span className="t-body min-w-0">{item.label}</span>
                       <span className="t-body shrink-0 font-medium">{priceLabel(item.price)}</span>
                     </li>
                   ))}
@@ -79,7 +79,7 @@ export function Visita() {
           </Reveal>
         </div>
 
-        <Reveal delay={0.1} className="flex h-full flex-col">
+        <Reveal delay={0.1} className="flex h-full min-w-0 flex-col">
           <div className="w-full overflow-hidden border border-sillar-300 bg-sillar-100 lg:min-h-[420px] lg:flex-1 [&>div]:h-full">
             {/* El mapa solo se carga si el visitante lo pide: sin clic no hay petición a Google. */}
             <MapEmbed />

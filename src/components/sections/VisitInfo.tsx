@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { OpenStatus } from "@/components/ui/OpenStatus";
 import { MapEmbed } from "@/components/sections/MapEmbed";
 import { Faq } from "@/components/sections/Faq";
+import { RESERVATIONS_ENABLED } from "@/lib/features";
 
 const TRAVEL_ICON = { Taxi: Car, Bus: Bus, Auto: Car } as const;
 
@@ -151,11 +152,13 @@ export function VisitInfo() {
             <Eyebrow tone="light">Grupos</Eyebrow>
             <h2 className="t-h2 mt-3 max-w-[18ch]">¿Vienes con un grupo grande?</h2>
             <p className="t-lead max-w-prose-narrow mt-4 !text-sillar-200">
-              Colegios, universidades y agencias de viaje pueden reservar visita guiada con anticipación.
+              {RESERVATIONS_ENABLED
+                ? "Colegios, universidades y agencias de viaje pueden reservar visita guiada con anticipación."
+                : "Colegios, universidades y agencias de viaje pueden consultarnos antes de venir."}
             </p>
           </Reveal>
-          <Button href="/reservas?tipo=grupo" variant="light">
-            Reservar para mi grupo
+          <Button href={RESERVATIONS_ENABLED ? "/reservas?tipo=grupo" : "/contacto"} variant="light">
+            {RESERVATIONS_ENABLED ? "Reservar para mi grupo" : "Consultar por mi grupo"}
           </Button>
         </div>
       </section>

@@ -9,6 +9,7 @@ import { LEGAL_NAV, NAV, PHOTOS, SITE } from "@/content/site";
 import { EASE } from "@/components/ui/Reveal";
 import { useMenu } from "@/components/layout/menu-context";
 import { OpenStatus } from "@/components/ui/OpenStatus";
+import { RESERVATIONS_ENABLED } from "@/lib/features";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -162,10 +163,10 @@ export function MenuOverlay() {
                         href={item.href}
                         onClick={closeForNav(item.href)}
                         aria-current={pathname === item.href ? "page" : undefined}
-                        className="group flex items-baseline gap-5 py-[clamp(10px,1.6vh,20px)] transition-colors duration-300 hover:text-ocre-300"
+                        className="group flex min-h-[48px] items-baseline gap-4 py-[clamp(7px,1.2vh,14px)] transition-colors duration-300 hover:text-ocre-300"
                       >
                         <span className="t-mono-num w-7 shrink-0 text-sillar-50/35">{String(index + 1).padStart(2, "0")}</span>
-                        <span className="t-display link-line">{item.label}</span>
+                        <span className="link-line text-[clamp(1.4rem,2.15vw,2.25rem)] leading-[1.08] font-medium tracking-[-0.025em]">{item.label}</span>
                       </Link>
                     </motion.li>
                   ))}
@@ -179,9 +180,9 @@ export function MenuOverlay() {
                   }
                   className="mt-[clamp(28px,4vh,48px)] flex flex-wrap items-center gap-4"
                 >
-                  <Link href="/reservas" onClick={closeForNav("/reservas")} className="btn btn-light">
-                    Reservar un evento
-                  </Link>
+                  {RESERVATIONS_ENABLED && (
+                    <Link href="/reservas" onClick={closeForNav("/reservas")} className="btn btn-light">Reservar un evento</Link>
+                  )}
                   <OpenStatus tone="dark" />
                 </motion.div>
               </motion.nav>
